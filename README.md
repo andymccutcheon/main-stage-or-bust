@@ -24,7 +24,7 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 - **Roadie's clipboard:** every week shows 6 steps with what to do and what it costs/earns your career.
 - **Band identity:** pick a genre, hometown, and van name (or roll random) — the whole season's story addresses YOUR band.
 - **Show-flyer recap** after every gig: result stamp, payouts, band-state warnings.
-- **Hype Press (optional AI):** add your own OpenAI-compatible key on the setup screen for AI flyer headlines. Flavor only — the dice are still the law, and it silently falls back offline.
+- **Hype Press (AI by default):** flyer headlines come from Muse Spark via OpenRouter through the game's own `/api/flavor` proxy — the key lives in the `OPENROUTER_API_KEY` env var, never in the browser. Flavor only (the dice are still the law), silent fallback to the offline house zine. Local dev: `OPENROUTER_API_KEY=sk-or-… npm start`.
 
 ## The week (both versions, same rules)
 1. Road die (weeks 4/7/10) · 2. Pick 1 of 2 gig offers · 3. Roll, reroll with Caffeine
@@ -41,7 +41,9 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 | `app/engine.js` | Shared rules engine (no DOM, no deps) — single source of truth |
 | `app/ui.js` | Browser game UI |
 | `app/narrative.js` | Offline story engine (pure, tested) |
-| `app/press.js` | Optional BYOK AI flavor hook |
+| `app/press.js` | Client flavor hook (server-first, offline fallback) |
+| `api/flavor.js` | Server flavor proxy (OpenRouter key in env) |
+| `server.cjs` | Local dev server (static + `/api/flavor`) |
 | `app/selftest.js` | Headless full-season browser bot (`?selftest=full`, `?selftest=N` pauses) |
 | `app/engine.test.js` | 20 unit/integration tests (`node --test`) |
 | `app/sim.js` | 10k-season Monte Carlo + balance gates |
@@ -49,6 +51,13 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 | `print/sheet.html`, `print/rules.html` | Print-and-play (inline CSS, no deps) |
 
 `npm test` = unit tests + smoke seasons + 10k sim gates.
+
+## Live AI setup (Vercel)
+Vercel Dashboard → project → Settings → Environment Variables:
+- `OPENROUTER_API_KEY` = your `sk-or-…` key (required)
+- `OPENROUTER_MODEL` = override, default `opencode/muse-spark-1.3-contributor-free` (optional)
+- `SITE_URL` = your live URL, e.g. `https://main-stage-or-bust.vercel.app` (optional, sent as referrer)
+Save → Redeploy. No key = the game silently runs the offline house zine.
 
 ## Verified (see BALANCE.md + screenshots in session notes)
 - 20/20 engine tests; scripted seasons pass in solo/coop/versus/rival + basement/grind.

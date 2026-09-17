@@ -81,18 +81,10 @@ function renderSetup() {
     </div></fieldset>
     <fieldset><legend>Hype Press (flavor text)</legend>
       <div class="pick">
-        <label><input type="radio" name="press" value="offline" checked><b>House zine</b><small>Offline, instant, free. The classic.</small></label>
-        <label><input type="radio" name="press" value="ai"><b>AI stringer (BYOK)</b><small>Optional AI flyer headlines. Flavor only — the dice are still the law.</small></label>
+        <label><input type="radio" name="press" value="ai" checked><b>AI stringer</b><small>Flyer headlines by Muse Spark. Flavor only — the dice are still the law.</small></label>
+        <label><input type="radio" name="press" value="offline"><b>House zine</b><small>Offline, instant, free. The classic.</small></label>
       </div>
-      <div id="pressCfg" hidden>
-        <label class="f" for="pressEndpoint">API endpoint (OpenAI-compatible)</label>
-        <input type="text" id="pressEndpoint" value="https://api.openai.com/v1">
-        <label class="f" for="pressModel">Model</label>
-        <input type="text" id="pressModel" value="gpt-4o-mini">
-        <label class="f" for="pressKey">API key (kept in memory only, never saved)</label>
-        <input type="text" id="pressKey" placeholder="sk-…" autocomplete="off">
-        <p><small class="dim">Sends only band name, genre, venue + result words. 9s timeout, silent fallback to house zine. Requires network.</small></p>
-      </div>
+      <p><small class="dim">AI mode sends only band name, genre, venue + result words to the game server, and silently falls back to the house zine when offline.</small></p>
     </fieldset>`;
   }
   const last = W.step === seq.length - 1;
@@ -113,10 +105,6 @@ function renderSetup() {
   if (wb) wb.addEventListener('click', () => { saveStep(); W.step -= 1; renderSetup(); });
   const wn = $('#wizNext');
   if (wn) wn.addEventListener('click', () => { saveStep(); W.step += 1; renderSetup(); });
-  const pc = app.querySelectorAll('input[name=press]');
-  if (pc.length) pc.forEach(r => r.addEventListener('click', () => {
-    const cfg = $('#pressCfg'); if (cfg) cfg.hidden = app.querySelector('input[name=press]:checked').value !== 'ai';
-  }));
   const sb = $('#startBtn');
   if (sb) sb.addEventListener('click', () => {
     saveStep();
@@ -130,7 +118,7 @@ function renderSetup() {
     U = newUI(createGame({ mode: mode === 'rival' ? 'solo' : mode, bandNames: names, difficulty: diff }));
     if (mode === 'rival') { U.game.rivalMode = true; U.rival = { fame: 0, fans: 0, cash: 20 }; }
     U.game.sides.forEach((sd, i) => { sd.flavor = pick(i === 0 ? W.a : W.b); });
-    Press.save({ mode: (app.querySelector('input[name=press]:checked') || {}).value || 'offline', endpoint: ($('#pressEndpoint') || {}).value || '', model: ($('#pressModel') || {}).value || '', key: ($('#pressKey') || {}).value || '' });
+    Press.save({ mode: (app.querySelector('input[name=press]:checked') || {}).value || 'ai' });
     W = null;
     startWeek(true);
   });

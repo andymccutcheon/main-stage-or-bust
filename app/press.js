@@ -1,42 +1,41 @@
 'use strict';
-/* MAIN STAGE OR BUST — optional AI flavor ("Hype Press"). BYOK, flavor ONLY.
-   The engine never reads AI output. Any failure -> null -> offline copy stays. */
+/* MAIN STAGE OR BUST — client flavor hook. AI is the default: the game asks
+   its own server (POST /api/flavor, key held in env) for headlines. The server
+   may be absent (local files, no key) — any failure returns null and the
+   offline house zine stays. Flavor ONLY: mechanics never read AI output. */
 const Press = {
-  KEY: 'rtw-press-v1',
-  cfg: { mode: 'offline', endpoint: 'https://api.openai.com/v1', model: 'gpt-4o-mini', key: '' },
+  KEY: 'msob-press-v1',
+  cfg: { mode: 'ai' },
   load() {
     try {
       const raw = localStorage.getItem(this.KEY);
-      if (raw) this.cfg = Object.assign(this.cfg, JSON.parse(raw));
-    } catch (e) { /* private mode etc: stay offline */ }
+      if (raw) { const o = JSON.parse(raw); if (o.mode === 'ai' || o.mode === 'offline') this.cfg.mode = o.mode; }
+    } catch (e) {}
     return this.cfg;
   },
   save(cfg) {
-    this.cfg = Object.assign(this.cfg, cfg);
-    try { localStorage.setItem(this.KEY, JSON.stringify({ mode: this.cfg.mode, endpoint: this.cfg.endpoint, model: this.cfg.model, key: this.cfg.key ? '***' : '' })); } catch (e) {}
-    // NOTE: API key is kept in memory only, never persisted. Re-enter per session.
+    if (cfg && (cfg.mode === 'ai' || cfg.mode === 'offline')) this.cfg.mode = cfg.mode;
+    try { localStorage.setItem(this.KEY, JSON.stringify({ mode: this.cfg.mode })); } catch (e) {}
     return this.cfg;
   },
-  on() { return this.cfg.mode === 'ai' && !!this.cfg.key; },
+  serverAvailable() {
+    try { return typeof location !== 'undefined' && /^https?:/.test(location.protocol || ''); } catch (e) { return false; }
+  },
+  on() { return this.cfg.mode === 'ai' && this.serverAvailable(); },
   async enhance(kind, ctx) {
     if (!this.on()) return null;
     const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 9000);
+    const t = setTimeout(() => ctrl.abort(), 9500);
     try {
-      const sys = 'You write punk-zine show flyer copy. Reply with ONLY a JSON object {"headline": string (max 70 chars), "blurb": string (max 220 chars)}. No markdown, no other text. No real people, no slurs, keep it road-mythology, not factual claims.';
-      const user = kind === 'flyer'
-        ? `Band "${ctx.band}" (${ctx.genre || 'rock'}). Week ${ctx.week} at ${ctx.venue}: ${ctx.result} (show ${ctx.show} vs difficulty ${ctx.D}, +${ctx.fans} fans, +$${ctx.cash}, +${ctx.fame} fame). Write the flyer recap.`
-        : `Band "${ctx.band}" (${ctx.genre || 'rock'}), week ${ctx.week} of 12, fame ${ctx.fame}, morale ${ctx.morale}/5. One hype sentence about the road ahead.`;
-      const res = await fetch(this.cfg.endpoint.replace(/\/$/, '') + '/chat/completions', {
+      const res = await fetch('/api/flavor', {
         method: 'POST', signal: ctrl.signal,
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.cfg.key },
-        body: JSON.stringify({ model: this.cfg.model, temperature: 0.9, response_format: { type: 'json_object' }, messages: [{ role: 'system', content: sys }, { role: 'user', content: user }] }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kind, ctx }),
       });
       if (!res.ok) return null;
-      const data = await res.json();
-      const obj = JSON.parse(((data.choices || [])[0] || {}).message?.content || '{}');
-      if (typeof obj.headline !== 'string' || typeof obj.blurb !== 'string') return null;
-      return { headline: obj.headline.slice(0, 70), blurb: obj.blurb.slice(0, 220), ai: true };
+      const o = await res.json();
+      if (typeof o.headline !== 'string' || typeof o.blurb !== 'string') return null;
+      return { headline: o.headline.slice(0, 70), blurb: o.blurb.slice(0, 220), ai: true };
     } catch (e) { return null; }
     finally { clearTimeout(t); }
   },
