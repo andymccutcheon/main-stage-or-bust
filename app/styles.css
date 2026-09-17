@@ -1,0 +1,154 @@
+/* MAIN STAGE OR BUST — elevated punk zine.
+   Design read: game UI redesign (markup preserved) with an elevated zine language.
+   Dials: variance 6 / motion 2 / density 2 — air over boxes.
+   Rules locked here: one accent (safety orange; sticker yellow appears ONLY on
+   offer cards + flyer), radius scale 12px surfaces / 8px controls, hairlines
+   instead of boxes, hierarchy by space + type, never by more borders. */
+@font-face{font-family:"Boogaloo";src:url("fonts/Boogaloo-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+:root{
+  --font-display:"Boogaloo","Arial Black",Impact,sans-serif;
+  --paper:#131313; --surface:#1b1b1b; --ink:#f2ede3; --dim:#a8a196;
+  --hair:#33312e;
+  --accent:#ff5a1f; --accent-ink:#161310;
+  --sticker:#ffd23f; --ok:#7dd87d; --bad:#ff7a7a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font:17px/1.6 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  background-image:radial-gradient(#232323 1px, transparent 1px);
+  background-size:14px 14px;
+}
+.wrap{max-width:880px;margin:0 auto;padding:32px 24px 96px}
+header.top{padding:24px 0 24px;margin-bottom:8px;border-bottom:1px solid var(--hair)}
+header.top h1{font-family:var(--font-display);font-size:clamp(42px,7.5vw,76px);margin:0;letter-spacing:1px;text-transform:uppercase;line-height:.95}
+.meta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.meta-right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.meta-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)}
+header.top h1 .w{color:var(--accent)}
+.badge{display:inline-block;border:1px solid var(--hair);border-radius:999px;padding:4px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)}
+.badge.hot{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+h2{font-family:var(--font-display);text-transform:uppercase;letter-spacing:1px;font-size:30px;margin:52px 0 14px}
+h3{font-size:14px;text-transform:uppercase;letter-spacing:1.5px;margin:26px 0 10px;color:var(--ink)}
+p.dim{color:var(--dim)} small.dim{color:var(--dim)}
+p{max-width:68ch}
+
+/* Controls: solid, one radius, hard shadow only on real actions */
+button{font:inherit;font-weight:700;color:var(--ink);background:#22211f;border:1px solid #4a4741;border-radius:8px;padding:10px 20px;cursor:pointer;transition:border-color .15s ease,color .15s ease,transform .05s ease}
+button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+button:active:not(:disabled){transform:translateY(1px)}
+button:disabled{opacity:.35;cursor:not-allowed}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:4px 4px 0 #000}
+button.primary:hover:not(:disabled){color:#000;filter:brightness(1.08)}
+button.ghost{background:transparent;box-shadow:none}
+button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--sticker);outline-offset:2px}
+input[type=text]{font:inherit;background:#101010;color:var(--ink);border:1px solid #4a4741;border-radius:8px;padding:11px 14px;width:100%}
+label.f{display:block;margin:14px 0 6px;font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1.5px;color:var(--dim)}
+fieldset{border:1px solid var(--hair);border-radius:12px;margin:20px 0;padding:20px 22px}
+legend{font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1.5px;padding:0 10px;color:var(--dim)}
+.pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:10px}
+.pick input{position:absolute;opacity:0}
+.pick label{border:1px solid #4a4741;border-radius:12px;padding:14px 16px;cursor:pointer;background:var(--surface)}
+.pick label b{display:block;text-transform:uppercase;letter-spacing:.5px}
+.pick input:checked+label,.pick label:has(input:checked){background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.pick input:checked+label small,.pick label:has(input:checked) small{color:var(--accent-ink)}
+.pick label small{display:block;font-weight:400;color:var(--dim);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+
+/* Panels breathe; only the active band panel gets an accent edge */
+.panel{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:24px;margin:24px 0}
+.panel.solo{border-left:6px solid var(--accent)}
+
+/* Stats as quiet label-over-value figures, not chips */
+.stats{display:flex;flex-wrap:wrap;gap:12px 32px;margin:14px 0 4px}
+.stat{color:var(--dim);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
+.stat b{display:block;color:var(--ink);font-size:24px;letter-spacing:0;margin-top:2px;font-variant-numeric:tabular-nums}
+.stat.hot b{color:var(--accent)}
+
+/* Offer cards keep the sticker moment — the one loud surface besides the flyer */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:16px 0 8px}
+.card{border:none;border-radius:12px;background:var(--sticker);color:#141414;padding:22px;transform:rotate(-.6deg)}
+.card:nth-child(2n){transform:rotate(.7deg)}
+.card.warped{background:var(--accent)}
+.card h3{margin:0 0 8px;font-family:var(--font-display);font-size:23px;text-transform:uppercase;color:#141414}
+.card ul{margin:8px 0 14px;padding-left:20px;line-height:1.7}
+.card button{background:#141414;color:var(--sticker);border-color:#141414;width:100%}
+.card button:hover{color:#fff}
+
+/* Dice: bigger, tactile */
+.dice{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}
+.die{width:66px;height:66px;font-size:28px;font-weight:900;background:var(--ink);color:#141414;border:none;border-radius:12px;box-shadow:4px 4px 0 #000;font-variant-numeric:tabular-nums}
+.die[aria-pressed=true]{background:var(--accent);transform:translateY(2px);box-shadow:1px 1px 0 #000}
+.die.gold{background:var(--sticker)}
+.die.slot{background:transparent;color:var(--dim);border:2px dashed #4a4741;box-shadow:none}
+.slots{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
+
+/* Stepper as a timeline: hairline, numerals, no boxes */
+.stepper{list-style:none;margin:6px 0 8px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0 18px}
+.stepper li{border:none;border-top:2px solid var(--hair);border-radius:0;background:none;padding:12px 2px 4px;margin:0;font-size:13px}
+.stepper li b{display:block;text-transform:uppercase;font-size:12px;letter-spacing:1px;color:var(--dim)}
+.stepper li small{color:var(--dim)}
+.stepper li.done{border-top-color:var(--ok)}
+.stepper li.done b{color:var(--ink)}
+.stepper li.done b::after{content:" ✓";color:var(--ok)}
+.stepper li.now{border-top-color:var(--accent)}
+.stepper li.now b{color:var(--accent)}
+
+.log{background:#0f0f0f;border:1px solid var(--hair);border-radius:12px;padding:16px 20px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;max-height:320px;overflow:auto}
+.log div{padding:3px 0}
+.log .wk{color:var(--accent);font-weight:700}
+.shoprow{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:6px}
+table.score{border-collapse:collapse;width:100%;margin:16px 0;font-variant-numeric:tabular-nums}
+table.score td,table.score th{padding:12px 10px;text-align:left;border:none;border-bottom:1px solid var(--hair)}
+table.score th{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);border-bottom:2px solid #4a4741}
+.rank{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);text-transform:uppercase;color:var(--accent);line-height:1.1;margin:12px 0}
+.notice{border:1px solid var(--accent);border-radius:12px;padding:14px 18px;margin:16px 0;background:#221007}
+.songs{letter-spacing:3px;font-size:20px;margin-top:10px}
+a{color:var(--sticker)}
+footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(--hair);padding-top:20px}
+
+/* Show flyer modal — unchanged star of the show, slightly roomier */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.74);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+.flyer{background:var(--sticker);color:#141414;border:none;border-radius:8px;max-width:500px;width:100%;padding:30px 30px 24px;transform:rotate(-1.2deg);box-shadow:10px 10px 0 #000;max-height:92vh;overflow:auto}
+.flyer-kicker{font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;border-bottom:3px solid #141414;padding-bottom:8px}
+.flyer-band{font-family:var(--font-display);font-size:46px;margin:10px 0 0;text-transform:uppercase;line-height:1.05}
+.stamp{display:inline-block;border:4px solid #141414;border-radius:8px;padding:4px 16px;font-family:var(--font-display);text-transform:uppercase;transform:rotate(-6deg);margin:12px 0;font-size:24px}
+.stamp.win{background:#141414;color:var(--sticker)}
+.stamp.fail{color:#141414;background:transparent}
+.flyer-head{font-weight:900;font-size:19px;margin:8px 0}
+.flyer-blurb{font-style:italic;margin:8px 0;line-height:1.55}
+.flyer-deltas{font-weight:700;border-top:2px dashed #141414;border-bottom:2px dashed #141414;padding:8px 0;margin:10px 0;font-variant-numeric:tabular-nums}
+.flyer-state{margin:8px 0;padding-left:20px;font-size:14px;line-height:1.6}
+.flyer .shoprow{margin-top:14px}
+.flyer .shoprow button{background:#141414;color:var(--sticker);border-color:#141414}
+.flyer .aitag{font-size:12px;font-weight:700}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+/* Help modal: editorial rhythm — numbered grid, grouped sections, air */
+.help-card{background:var(--surface);border:1px solid #4a4741;border-radius:12px;max-width:640px;width:100%;padding:38px 40px;max-height:88vh;overflow:auto}
+.help-card h2{margin:0 0 6px}
+.help-card .hsub{color:var(--dim);margin:0 0 8px}
+.help-card h3.hgroup{font-size:12px;letter-spacing:2px;color:var(--accent);margin:30px 0 4px}
+.help-card ol.steps{list-style:none;margin:0;padding:0}
+.help-card ol.steps li{display:grid;grid-template-columns:52px 1fr;gap:16px;margin:0;padding:18px 0;border-bottom:1px solid var(--hair)}
+.help-card ol.steps li:last-child{border-bottom:none}
+.help-card ol.steps li::before{content:attr(data-n);font-family:var(--font-display);font-size:34px;line-height:1;color:var(--accent)}
+.help-card .hstep{display:block;font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:14px;margin-bottom:6px}
+.help-card .hbody{color:#d9d3c7;line-height:1.75;font-size:15.5px}
+.help-card p.fine{line-height:1.75;color:#d9d3c7;margin:14px 0}
+.help-card p.fine b{color:var(--ink)}
+.help-card:focus{outline:none}
+@media(max-width:640px){.help-card{padding:26px 22px}.help-card ol.steps li{grid-template-columns:36px 1fr;gap:12px}}
+
+/* Palette switcher: one accent var, five themes. Poster yellow stays constant. */
+:root,[data-theme="orange"]{--accent:#ff5a1f;--accent-ink:#161310}
+[data-theme="pink"]{--accent:#ff3d8b;--accent-ink:#1c0e14}
+[data-theme="lime"]{--accent:#9dff2e;--accent-ink:#131a08}
+[data-theme="blue"]{--accent:#3fa9ff;--accent-ink:#0d141b}
+[data-theme="red"]{--accent:#ff4438;--accent-ink:#1c0d0b}
+.swatches{display:inline-flex;gap:8px;align-items:center}
+.swatch{width:26px;height:26px;border-radius:50%;background:var(--sw);border:2px solid #4a4741;padding:0;box-shadow:none;cursor:pointer}
+.swatch:hover{border-color:var(--ink)}
+.swatch.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}

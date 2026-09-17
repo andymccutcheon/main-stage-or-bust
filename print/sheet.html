@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MAIN STAGE OR BUST — Band Sheet</title>
+<style>
+  @page { size: Letter; margin: 0.45in; }
+  @font-face{font-family:"Boogaloo";src:url("../app/fonts/Boogaloo-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+  * { box-sizing: border-box; }
+  body { font-family: Helvetica, Arial, sans-serif; color: #111; margin: 0; padding: 0.45in; font-size: 11.5pt; }
+  h1 { font-family: "Boogaloo", Impact, "Arial Black", sans-serif; text-transform: uppercase; letter-spacing: 1px; font-size: 22pt; margin: 0 0 2px; }
+  .sub { font-size: 9.5pt; color: #333; margin-bottom: 8px; }
+  .row { display: flex; gap: 10px; margin: 6px 0; align-items: flex-end; flex-wrap: wrap; }
+  .field { flex: 1 1 auto; } .field.small { flex: 0 0 120px; }
+  .lbl { font-size: 8pt; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+  .wline { border-bottom: 2px solid #111; min-height: 22px; }
+  .track { margin: 7px 0; }
+  .boxes span { display: inline-block; width: 15px; height: 15px; border: 2px solid #111; margin: 1px; vertical-align: middle; text-align: center; font-size: 8pt; line-height: 12px; }
+  .boxes span.gate { background: #111; color: #fff; }
+  .num { width: 76px; height: 26px; border: 2px solid #111; }
+  table.log { border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 9.5pt; }
+  table.log th, table.log td { border: 1.5px solid #111; padding: 3px 4px; text-align: center; height: 20px; }
+  table.log th { background: #111; color: #fff; font-size: 8pt; text-transform: uppercase; letter-spacing: .5px; }
+  table.log td.venue { width: 26%; } 
+  h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 2px; border-bottom: 2px solid #111; }
+  .two { display: flex; gap: 14px; } .two > div { flex: 1; }
+  .note { font-size: 8.5pt; color: #333; }
+  button#printBtn { font-size: 12pt; padding: 8px 18px; margin-bottom: 10px; }
+  @media print { button#printBtn, .noprint { display: none; } body { padding: 0; } }
+</style>
+</head>
+<body>
+<button id="printBtn" class="noprint" onclick="window.print()">🖨️ Print this sheet</button>
+<h1>Main Stage or Bust — Band Sheet</h1>
+<div class="sub">One sheet per band per season. You need: 5 white d6 + 1 gold d6 (manager only), a pencil.</div>
+<div class="row">
+  <div class="field"><div class="lbl">Band name</div><div class="wline">&nbsp;</div></div>
+  <div class="field small"><div class="lbl">Mode (circle)</div><div>Solo / Coop / Versus</div></div>
+  <div class="field small"><div class="lbl">Difficulty</div><div>Basement / Club / Grind</div></div>
+</div>
+<div class="two">
+<div>
+  <h2>Resources (cross off / write in)</h2>
+  <div class="track"><span class="lbl">Cash $ (start 20, 25 basement, 15 grind): </span><span class="wline" style="display:inline-block;width:70px">&nbsp;</span></div>
+  <div class="track"><span class="lbl">Fans (score, start 0): </span><span class="wline" style="display:inline-block;width:70px">&nbsp;</span></div>
+  <div class="track"><span class="lbl">Fame ladder — tiers unlock at ■12 (T2) ■26 (T3) ■45 (Main Stage pool, wk 10+)</span><br>
+  <span class="boxes" id="fame"></span></div>
+  <div class="track"><span class="lbl">Hype 0–10 (spend 2 = +1 show, max +2)</span><br><span class="boxes" id="hype"></span></div>
+  <div class="track"><span class="lbl">Morale (start 5 · fail −1 · 0 = rest next week)</span><br><span class="boxes" id="morale"></span></div>
+  <div class="track"><span class="lbl">Van (start 6 · 0 = shop week)</span><br><span class="boxes" id="van"></span></div>
+  <div class="track"><span class="lbl">Merch stock (start 6 · max 12 · restock $1/2 shirts)</span><br><span class="boxes" id="merch"></span></div>
+  <div class="track"><span class="lbl">Caffeine (start 2 · max 5 · 1 = reroll pass, 2/wk max)</span><br><span class="boxes" id="caff"></span></div>
+</div>
+<div>
+  <h2>Engine</h2>
+  <div class="track"><span class="lbl">Skill stars — cross one per win; every 4th = +1 skill (max +3)</span><br><span class="boxes" id="stars"></span></div>
+  <div class="track"><span class="lbl">Songs — 1 box per pair in leftover dice (1/wk max). 4 = album: +5 fame +10 fans +1 show hype</span><br>
+  Album A: <span class="boxes" id="s1"></span><br>Album B: <span class="boxes" id="s2"></span></div>
+  <div class="track"><span class="lbl">Crew</span><br>
+  ☐ Roadie $30 (+2 free merch/show, van +1/wk) &nbsp; ☐ Guitar tech $35 (+1 show) &nbsp; ☐ Manager $25 + $3/wk (gold die)</div>
+  <div class="track"><span class="lbl">Week</span><br><span class="boxes" id="weeks"></span></div>
+  <p class="note">Show hype = 2 stage dice + skill + albums + tech + hype-spend. Win ties go to the band. Fail: half cash, +1 fan, −1 morale. Coffee House always +1(caf). Anthem (4-of-a-kind on kept dice): +5 fans +3 fame, 1/wk.</p>
+</div>
+</div>
+<h2>Tour log</h2>
+<table class="log">
+<tr><th>Wk</th><th class="venue">Venue</th><th>D</th><th>Show</th><th>W/L</th><th>Fans</th><th>Cash</th><th>Fame</th><th>Notes</th></tr>
+<tr><td>1</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>2</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>3</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>4★</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>5</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>6</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>7★</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>8</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>9</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>10★</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>11</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td>12</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<p class="note">★ = road die weeks (1d6: 1 breakdown −2 van or pay $8 · 2 storm −2 hype · 3 +3 fans · 4 +$6 · 5 +2 fame · 6 +1(caf) +1 morale). Final score = Fans + Fame + ⌊Cash/5⌋ + Albums×10. Ranks: &lt;80 Basement Tapes · 80–119 Local Opener · 120–159 Club Kings · 160–199 Road Dogs · 200–239 Main Stage Bound · 240+ Headliner.</p>
+<script>
+(function(){
+  function boxes(id,n,gates){var el=document.getElementById(id),h='';for(var i=0;i<n;i++){h+='<span'+((gates||[]).indexOf(i)>=0?' class="gate"':'')+'>'+(i+1)+'</span>';}el.innerHTML=h;}
+  boxes('fame',60,[11,25,44]); boxes('hype',10); boxes('morale',5); boxes('van',6);
+  boxes('merch',12); boxes('caff',5); boxes('stars',12); boxes('s1',4); boxes('s2',4); boxes('weeks',12);
+})();
+</script>
+</body>
+</html>

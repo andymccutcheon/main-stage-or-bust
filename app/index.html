@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAIN STAGE OR BUST — Roll &amp; Write Tour Diary</title>
+<meta name="description" content="A 1-2 player roll-and-write: take your DIY band from VFW halls to the main stage. Solo, coop, versus, or vs Rival AI.">
+<link rel="stylesheet" href="styles.css">
+<script>try{var m=/theme=([a-z]+)/.exec(location.search);var ok=["orange","pink","lime","blue","red"];var t=m?m[1]:(localStorage.getItem("msob-theme")||"orange");if(ok.indexOf(t)<0)t="orange";document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Main Stage <span class="w">or Bust</span></h1>
+    <div class="meta-row">
+    <span class="badge">roll &amp; write tour diary</span>
+    <span class="badge hot">1–2 players</span>
+    <span class="meta-right">
+    <span class="meta-label" id="paletteLabel">Palette</span>
+    <span class="swatches" role="group" aria-labelledby="paletteLabel">
+      <button class="swatch" data-theme="orange" style="--sw:#ff5a1f" aria-label="Safety orange" title="Safety orange"></button>
+      <button class="swatch" data-theme="pink" style="--sw:#ff3d8b" aria-label="Xerox pink" title="Xerox pink"></button>
+      <button class="swatch" data-theme="lime" style="--sw:#9dff2e" aria-label="Slime lime" title="Slime lime"></button>
+      <button class="swatch" data-theme="blue" style="--sw:#3fa9ff" aria-label="Copier blue" title="Copier blue"></button>
+      <button class="swatch" data-theme="red" style="--sw:#ff4438" aria-label="Riot red" title="Riot red"></button>
+    </span>
+    <button id="helpBtn" class="ghost">? How to play</button>
+    </span>
+    </div>
+  </header>
+  <main id="app" aria-live="off"></main>
+  <footer>Print sheets: <a href="../print/sheet.html">band sheet</a> · <a href="../print/rules.html">rules</a>.</footer>
+</div>
+<div id="live" class="sr" aria-live="polite" style="position:absolute;left:-9999px"></div>
+<script src="engine.js"></script>
+<script src="narrative.js"></script>
+<script src="press.js"></script>
+<script src="ui.js"></script>
+<script>if(/selftest/.test(location.search)){var t=document.createElement("script");t.src="selftest.js";document.body.appendChild(t);}</script>
+</body>
+</html>
