@@ -58,7 +58,7 @@ Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with
 - Versus: higher Final Score wins. Weekly twist: higher Show Hype headlines (+3 Fans +$2); loser opens (+1 Fame). Tie: both +1 Fan.
 
 ## 7. Solo implementation
-Beat-the-rank game on one sheet vs the 12-week clock. Optional Rival AI ("The Stagedivers") for head-to-head practice: rival auto-picks the higher-tier offer, virtual success rate by table (T1 80%, T2 60%, T3 40%, Main 25%), gains venue averages on success / half cash on fail, +weekly fans 6 +/- 3. No upkeep beyond one log line.
+Beat-the-rank game on one sheet vs the 12-week clock. Optional computer opponent ("The Stagedivers") for head-to-head practice: rival auto-picks the higher-tier offer, virtual success rate by table (T1 80%, T2 60%, T3 40%, Main 25%), gains venue averages on success / half cash on fail, +weekly fans 6 +/- 3. No upkeep beyond one log line.
 
 ## 8. Multiplayer implementation
 - Coop (2p, one band): shared sheet, shared resources, 6 dice pool (each player rolls 3, gold added if Manager), joint calls, shared Caffeine. Difficulty +1 to all D (tested tuning lever). Both players must agree on Hype spend and purchases; tie-break: player with the birthday closest to tour start decides.
@@ -75,7 +75,7 @@ Beat-the-rank game on one sheet vs the 12-week clock. Optional Rival AI ("The St
 - Known soft spots for human playtest: Van-0 shop-week spiral, coop D+1 feel, versus Headliner swing. Economy is loose for winners by design (bankruptcy <1% skilled); Grind difficulty (start $15, road events from week 2) is the pressure valve.
 
 ## 11. Replayability
-9 venues, mixed 2-card offers, road events, pair-driven songs, 3 crew builds (consistency/power/engine), 3 modes (solo/coop/versus) + Rival AI + rank chase. Season is 25–40 min solo, 40–60 min 2p.
+9 venues, mixed 2-card offers, road events, pair-driven songs, 3 crew builds (consistency/power/engine), 3 modes (solo/coop/versus) + computer opponent + rank chase. Season is 25–40 min solo, 40–60 min 2p.
 
 ## 12. Prototype and playtest priorities
 P1: season Fame pacing (is the Main Stage reachable ~weeks 10–12 on good play, rare otherwise?). P2: bankruptcy rate on fame-rush vs turtle. P3: rank thresholds vs sim score distribution. P4: coop D+1 difficulty feel. P5: versus Headliner bonus swing. P6: sheet usability (can a player resolve a week in <3 min by week 3?). P7: Manager wage vs value. All P1–P3 must pass sim gates before release; P4–P7 flagged for human playtest.

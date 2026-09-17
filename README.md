@@ -1,7 +1,7 @@
 # MAIN STAGE OR BUST — Roll & Write Tour Diary (1–2 players)
 
 Take your DIY band from VFW halls to the main stage in a 12-week season.
-Solo (beat the ranks), Coop (one shared band), Versus (two bands, headliner bonus), or Solo vs Rival AI. Plus full print-and-play.
+Solo (beat the ranks), Coop (one shared band), Versus (two bands, headliner bonus), or Solo vs the Computer. Plus full print-and-play.
 
 ## Play the video game
 No build, no accounts, works offline. Either:

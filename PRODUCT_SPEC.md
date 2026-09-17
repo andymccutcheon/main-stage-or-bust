@@ -2,7 +2,7 @@
 
 ## A. Products
 1. **Print-and-play (PDF via browser print):** `print/rules.html` (2-page rules + offer tables + road table) and `print/sheet.html` (1-page band sheet, front; rules-back optional). Must be usable with 5d6 + pencil, black-and-white friendly, no color-dependent rules.
-2. **Web game (static, offline-capable):** `app/` playable in any modern browser by opening `index.html` or `npm start`. Modes: Solo / Coop (shared hot-seat) / Versus (2 humans hot-seat) / Solo vs Rival AI. Punk-zine aesthetic, keyboard + mouse + touch, screen-reader labels on all controls.
+2. **Web game (static, offline-capable):** `app/` playable in any modern browser by opening `index.html` or `npm start`. Modes: Solo / Coop (shared hot-seat) / Versus (2 humans hot-seat) / Solo vs computer. Punk-zine aesthetic, keyboard + mouse + touch, screen-reader labels on all controls.
 
 ## B. Shared rules engine (`app/engine.js`, also used by sims/tests)
 Pure logic, no DOM: state creation, offer generation (seedable RNG), dice rolling, rerolls, song detection, show resolution, work-dice resolution, road events, crew purchases, restock/repair, morale/van fail states, weekly headliner comparison, rival AI turns, final scoring + ranks. Deterministic given an RNG function. Digital UI and print rules MUST match engine behavior; any divergence is a P0 bug.
@@ -12,7 +12,7 @@ Pure logic, no DOM: state creation, offer generation (seedable RNG), dice rollin
 - Season: exactly 12 weeks + optional main-stage encore note; forced-rest handling; week log; end-of-season score + rank + tour diary export (copyable text).
 - Purchases anytime cash/fame allow (Roadie $25 / Tech $30 / Manager $20+$3/wk); restock/repair anytime; hype spend at show time.
 - Versus: shared weekly offers; headliner bonus; separate sheets; final compare.
-- Rival AI: one-click "AI takes its turn" with visible log line.
+- Computer opponent: one-click turn resolution with visible log line.
 - No accounts, no network, no build step to play (plain HTML/CSS/JS). `npm test` runs engine + sim gates with plain node (no deps).
 
 ## D. Non-functional

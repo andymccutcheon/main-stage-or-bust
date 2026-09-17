@@ -152,3 +152,6 @@ footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(
 .swatch{width:26px;height:26px;border-radius:50%;background:var(--sw);border:2px solid #4a4741;padding:0;box-shadow:none;cursor:pointer}
 .swatch:hover{border-color:var(--ink)}
 .swatch.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
+
+/* Hero tagline on the setup wizard */
+.hero-tag{font-size:20px;line-height:1.55;max-width:58ch;margin:26px 0 18px;color:var(--ink)}

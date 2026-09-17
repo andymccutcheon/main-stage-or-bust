@@ -57,7 +57,7 @@ function renderSetup() {
   const stepNo = W.step + 1;
   let body = '';
   if (step === 'mode') {
-    body = tilePick('wmode', [['solo', 'Solo', 'One band vs the clock + rank'], ['coop', 'Coop (2p)', 'One band, shared dice, D+1'], ['versus', 'Versus (2p)', 'Two bands, same offers, headliner bonus'], ['rival', 'Vs Rival AI', 'Solo head-to-head vs The Stagedivers']], W.mode);
+    body = tilePick('wmode', [['solo', 'Solo', 'One band vs the clock + rank'], ['coop', 'Coop (2p)', 'One band, shared dice, D+1'], ['versus', 'Versus (2p)', 'Two bands, same offers, headliner bonus'], ['rival', 'Vs Computer', 'Solo head-to-head vs The Stagedivers']], W.mode);
   } else if (step === 'name' || step === 'name2') {
     const id = step === 'name' ? 'bandA' : 'bandB';
     body = `<label class="f" for="${id}">Band name</label><input type="text" id="${id}" maxlength="24" value="${esc(side.name)}">`;
@@ -88,7 +88,8 @@ function renderSetup() {
     </fieldset>`;
   }
   const last = W.step === seq.length - 1;
-  app.innerHTML = `<p><span class="badge">Step ${stepNo} of ${seq.length}</span></p>
+  app.innerHTML = `<p class="hero-tag">Twelve weeks. Two offers a week. One stage. Take your DIY band from VFW halls to the main stage — if the van survives.</p>
+  <p><span class="badge">Step ${stepNo} of ${seq.length}</span></p>
   <h2>${esc(wizLabel())}</h2>${body}
   <p><span class="shoprow">${W.step > 0 ? '<button class="ghost" id="wizBack">← Back</button>' : ''}
   ${last ? '<button class="primary" id="startBtn">Load the van →</button>' : '<button class="primary" id="wizNext">Continue →</button>'}</span></p>`;
@@ -211,7 +212,7 @@ function renderGame() {
   ${multi ? `<span class="badge hot">${esc(s.name)} to play</span>` : ''}</p>`;
   html += stepperHtml();
   html += g.sides.map((x, i) => statHtml(x, multi && i === U.turnIdx)).join('');
-  if (U.rival) html += `<div class="panel"><b>The Stagedivers (AI)</b> <small class="dim">fans ${U.rival.fans} · fame ${U.rival.fame} · cash $${U.rival.cash}</small></div>`;
+  if (U.rival) html += `<div class="panel"><b>The Stagedivers (CPU)</b> <small class="dim">fans ${U.rival.fans} · fame ${U.rival.fame} · cash $${U.rival.cash}</small></div>`;
 
   if (needRoad()) {
     html += `<div class="panel"><h3>🛣️ Between cities…</h3><p class="dim">The road demands a toll. Roll 1d6.</p><button class="primary" id="roadBtn">Roll road die</button><span id="roadOut"></span></div>`;
