@@ -78,14 +78,7 @@ function renderSetup() {
     <fieldset><legend>Day-one difficulty</legend><div class="pick" id="diffPick">
       ${[['basement', 'Basement', 'Start +$5. Learning the ropes.'], ['club', 'Club circuit', 'Standard season.'], ['grind', 'The Grind', 'Start $15. Road events from week 2. No mercy.']].map(([v, t, d]) =>
         `<label><input type="radio" name="diff" value="${v}"${v === W.diff ? ' checked' : ''}><b>${t}</b><small>${d}</small></label>`).join('')}
-    </div></fieldset>
-    <fieldset><legend>Hype Press (flavor text)</legend>
-      <div class="pick">
-        <label><input type="radio" name="press" value="ai" checked><b>AI stringer</b><small>Flyer headlines by Muse Spark. Flavor only — the dice are still the law.</small></label>
-        <label><input type="radio" name="press" value="offline"><b>House zine</b><small>Offline, instant, free. The classic.</small></label>
-      </div>
-      <p><small class="dim">AI mode sends only band name, genre, venue + result words to the game server, and silently falls back to the house zine when offline.</small></p>
-    </fieldset>`;
+    </div></fieldset>`;
   }
   const last = W.step === seq.length - 1;
   app.innerHTML = `<p class="hero-tag">Twelve weeks. Two offers a week. One stage. Take your DIY band from VFW halls to the main stage — if the van survives.</p>
@@ -119,7 +112,6 @@ function renderSetup() {
     U = newUI(createGame({ mode: mode === 'rival' ? 'solo' : mode, bandNames: names, difficulty: diff }));
     if (mode === 'rival') { U.game.rivalMode = true; U.rival = { fame: 0, fans: 0, cash: 20 }; }
     U.game.sides.forEach((sd, i) => { sd.flavor = pick(i === 0 ? W.a : W.b); });
-    Press.save({ mode: (app.querySelector('input[name=press]:checked') || {}).value || 'ai' });
     W = null;
     startWeek(true);
   });
@@ -389,10 +381,9 @@ function openFlyer(s) {
     <div><span class="stamp ${rec.result}">${rec.result === 'win' ? 'Killed it' : 'Trainwreck'}</span></div>
     <p class="flyer-head" id="flyerHead">${esc(copy.headline)}</p>
     <p class="flyer-blurb" id="flyerBlurb">${esc(copy.blurb)}</p>
-    <div class="flyer-deltas">+${rec.fans} fans · +$${rec.cash} · +${rec.fame} fame <span class="aitag" id="aiTag"></span></div>
+    <div class="flyer-deltas">+${rec.fans} fans · +$${rec.cash} · +${rec.fame} fame</div>
     <ul class="flyer-state">${warns.length ? warns.map(w => `<li>${esc(w)}</li>`).join('') : '<li>All systems loud. The van even starts.</li>'}</ul>
     <div class="shoprow">
-      ${Press.on() ? '<button id="regenBtn" title="Rewrite with AI">AI rewrite</button>' : ''}
       <button id="backBtn">Back to the van</button>
       <button class="primary" id="endWeekBtn">${label}</button>
     </div></div>`;
@@ -401,17 +392,13 @@ function openFlyer(s) {
   ov.querySelector('#backBtn').addEventListener('click', close);
   ov.querySelector('#endWeekBtn').addEventListener('click', () => { close(); nextTurn(false); });
   const eb = ov.querySelector('#endWeekBtn'); if (eb) eb.focus();
-  const aiCtx = { band: s.name, genre: (s.flavor || {}).genre, week: g.week, venue: v.name, result: rec.result, show: rec.show, D: rec.D, fans: rec.fans, cash: rec.cash, fame: rec.fame };
-  const swap = (c) => {
-    if (!c || !document.body.contains(ov)) return;
-    ov.querySelector('#flyerHead').textContent = c.headline;
-    ov.querySelector('#flyerBlurb').textContent = c.blurb;
-    ov.querySelector('#aiTag').textContent = 'AI press';
-  };
+  // Invisible upgrade: if the server has a fresher headline, swap it in silently.
   if (Press.on()) {
-    Press.enhance('flyer', aiCtx).then(swap);
-    const rg = ov.querySelector('#regenBtn');
-    if (rg) rg.addEventListener('click', () => { ov.querySelector('#aiTag').textContent = '…asking the stringer…'; Press.enhance('flyer', aiCtx).then(swap); });
+    Press.enhance('flyer', { band: s.name, genre: (s.flavor || {}).genre, week: g.week, venue: v.name, result: rec.result, show: rec.show, D: rec.D, fans: rec.fans, cash: rec.cash, fame: rec.fame }).then((c) => {
+      if (!c || !document.body.contains(ov)) return;
+      ov.querySelector('#flyerHead').textContent = c.headline;
+      ov.querySelector('#flyerBlurb').textContent = c.blurb;
+    });
   }
 }
 function actOnDie(i) {

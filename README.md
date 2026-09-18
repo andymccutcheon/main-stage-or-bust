@@ -24,7 +24,7 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 - **Roadie's clipboard:** every week shows 6 steps with what to do and what it costs/earns your career.
 - **Band identity:** pick a genre, hometown, and van name (or roll random) — the whole season's story addresses YOUR band.
 - **Show-flyer recap** after every gig: result stamp, payouts, band-state warnings.
-- **Hype Press (AI by default):** flyer headlines come from Muse Spark via OpenRouter through the game's own `/api/flavor` proxy — the key lives in the `OPENROUTER_API_KEY` env var, never in the browser. Flavor only (the dice are still the law), silent fallback to the offline house zine. Local dev: `OPENROUTER_API_KEY=sk-or-… npm start`.
+- **Hype Press (invisible):** every flyer headline is written by Muse Spark via OpenRouter through the game's own `/api/flavor` proxy — the key lives in the `OPENROUTER_API_KEY` env var, never in the browser. There is no toggle and no branding: flavor only (the dice are still the law), silent fallback to the offline house zine. Local dev: `OPENROUTER_API_KEY=sk-or-… npm start`.
 
 ## The week (both versions, same rules)
 1. Road die (weeks 4/7/10) · 2. Pick 1 of 2 gig offers · 3. Roll, reroll with Caffeine

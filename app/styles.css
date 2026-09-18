@@ -123,7 +123,6 @@ footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(
 .flyer-state{margin:8px 0;padding-left:20px;font-size:14px;line-height:1.6}
 .flyer .shoprow{margin-top:14px}
 .flyer .shoprow button{background:#141414;color:var(--sticker);border-color:#141414}
-.flyer .aitag{font-size:12px;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
 
 /* Help modal: editorial rhythm — numbered grid, grouped sections, air */
