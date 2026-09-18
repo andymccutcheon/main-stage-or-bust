@@ -142,17 +142,21 @@ function diceCount(s) { return (U.game.mode === 'coop' ? 6 : 5) + (s.crew.manage
 /* ---------- shared render ---------- */
 function statHtml(s, active) {
   const songs = '♪'.repeat(s.songs) + '·'.repeat(8 - s.songs);
+  const tip = (label, value, text, hot) => `<span class="stat${hot ? ' hot' : ''}" tabindex="0" data-tip="${text}">${label}<b>${value}</b></span>`;
   return `<div class="panel${active ? ' solo' : ''}">
-    <b>${esc(s.name)}</b> <small class="dim">tier ${tierOf(s.fame)} · skill +${s.skill} · albums +${s.albums}</small>
+    <b>${esc(s.name)}</b> <small class="dim" tabindex="0" data-tip="Tiers gate your offers: clubs at 12 fame, big rooms at 26, Main Stage pool at 45+. Skill grows every 4th win (+1 show hype, max +3). Each finished album adds +1 show hype.">tier ${tierOf(s.fame)} · skill +${s.skill} · albums +${s.albums}</small>
     <div class="stats">
-      <span class="stat">Cash<b>$${s.cash}</b></span><span class="stat hot">Fans<b>${s.fans}</b></span>
-      <span class="stat">Fame<b>${s.fame}</b></span><span class="stat">Hype<b>${s.hype}</b></span>
-      <span class="stat">Morale<b>${'♥'.repeat(s.morale)}${'♡'.repeat(CAPS.morale - s.morale)}</b></span>
-      <span class="stat">Van<b>${'▮'.repeat(s.van)}${'▯'.repeat(CAPS.van - s.van)}</b></span>
-      <span class="stat">Merch<b>${s.merch}</b></span><span class="stat">Caff<b>${s.caffeine}</b></span>
+      ${tip('Cash', '$' + s.cash, 'Gas, entries, crew. Earn it at gigs, merch tables, day jobs. Broke is not game over — but everything gets harder.')}
+      ${tip('Fans', s.fans, 'THE SCORE, mostly. Final = Fans + Fame + Cash÷5 + Albums×10. Win shows, flyer neighborhoods, finish albums.', true)}
+      ${tip('Fame', s.fame, 'Unlocks bigger rooms: clubs at 12, big rooms at 26, Main Stage pool at 45+. Win shows and land press to climb.')}
+      ${tip('Hype', s.hype, 'Banked energy. Spend 2 for +1 on any show (max +2). Earn it flyering with 5+ and surviving ugly weeks.')}
+      ${tip('Morale', '♥'.repeat(s.morale) + '♡'.repeat(CAPS.morale - s.morale), 'Band spirit. Failed shows cost 1. At 0, next week is forced rest: +$5, +3 morale, +1 caffeine.')}
+      ${tip('Van', '▮'.repeat(s.van) + '▯'.repeat(CAPS.van - s.van), 'The legs. Breakdowns damage it. At 0, next week is forced shop: −$4, van +3. Patch it with day-job 6s or the mechanic.')}
+      ${tip('Merch', s.merch, 'Shirts are money. Each merch die sells min(die, stock) shirts × $2. Restock anytime: $1 per 2 shirts.')}
+      ${tip('Caff', s.caffeine, 'Rerolls. 1 token rerolls any dice, max 2 passes per show week. Coffee Houses and smooth miles top it up.')}
     </div>
-    <div class="songs" title="songs">${songs}</div>
-    <small class="dim">crew: ${['roadie', 'tech', 'manager'].map(c => s.crew[c] ? `✅${c}` : `⬜${c}`).join(' ')}</small>
+    <div class="songs" tabindex="0" data-tip="Pairs in leftover dice write songs (1 per week). 4 songs = an album: +5 fame, +10 fans, +1 show hype forever.">${songs}</div>
+    <small class="dim" tabindex="0" data-tip="Hired help. Roadie: +2 free merch sales per show, van +1 weekly. Guitar tech: +1 show hype. Manager: gold die for $3/week.">crew: ${['roadie', 'tech', 'manager'].map(c => s.crew[c] ? `✅${c}` : `⬜${c}`).join(' ')}</small>
   </div>`;
 }
 function shopHtml(s) {

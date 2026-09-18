@@ -61,11 +61,19 @@ legend{font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1.
 .panel{background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:24px;margin:24px 0}
 .panel.solo{border-left:6px solid var(--accent)}
 
-/* Stats as quiet label-over-value figures, not chips */
-.stats{display:flex;flex-wrap:wrap;gap:12px 32px;margin:14px 0 4px}
-.stat{color:var(--dim);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px}
-.stat b{display:block;color:var(--ink);font-size:24px;letter-spacing:0;margin-top:2px;font-variant-numeric:tabular-nums}
+/* Stats as tappable tiles with CSS-only teaching tooltips */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin:16px 0 6px}
+.stat{position:relative;background:rgba(255,255,255,.025);border:1px solid var(--hair);border-radius:10px;padding:10px 12px 9px;color:var(--dim);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:help}
+.stat b{display:block;color:var(--ink);font-family:var(--font-display);font-weight:400;font-size:27px;letter-spacing:.5px;margin-top:1px;line-height:1.1}
+.stat.hot{border-color:var(--accent)}
 .stat.hot b{color:var(--accent)}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:230px;max-width:62vw;background:var(--ink);color:#161310;font-size:13px;font-weight:400;line-height:1.55;letter-spacing:0;text-transform:none;padding:11px 14px;border-radius:8px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;white-space:normal}
+[data-tip]:hover::before,[data-tip]:focus-visible::before{content:"";position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);border-bottom:none;z-index:30;pointer-events:none}
+.stats .stat:first-child:hover::after,.stats .stat:first-child:focus-visible::after{left:0;transform:none}
+.stats .stat:first-child:hover::before,.stats .stat:first-child:focus-visible::before{left:20px;transform:none}
+.stats .stat:last-child:hover::after,.stats .stat:last-child:focus-visible::after{left:auto;right:0;transform:none}
+.stats .stat:last-child:hover::before,.stats .stat:last-child:focus-visible::before{left:auto;right:20px;transform:none}
+small.dim[data-tip],div.songs[data-tip]{cursor:help;border-bottom:1px dotted #4a4741}
 
 /* Offer cards keep the sticker moment — the one loud surface besides the flyer */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:16px 0 8px}
