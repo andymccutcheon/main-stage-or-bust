@@ -196,3 +196,24 @@ kbd{display:inline-block;border:1px solid #4a4741;border-bottom-width:2px;border
 .dice.roll-in .die:nth-child(6){animation-delay:.2s}
 .dice.roll-in .die:nth-child(7){animation-delay:.24s}
 @media(max-width:640px){.stage-grid{grid-template-columns:auto auto}.show-math{grid-column:1/-1}}
+
+/* VISUAL rail — split-screen 16-bit tour presentation (M1 shell) */
+.wrap{max-width:1400px}
+.game-grid{display:grid;grid-template-columns:minmax(480px,7fr) 5fr;gap:24px;align-items:start}
+.game-grid #app{min-width:0;max-width:880px}
+#visualRail{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;background:var(--surface);border:1px solid var(--hair);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+#visualRail canvas{width:100%;height:auto;aspect-ratio:4/3;image-rendering:pixelated;background:#0e0e18;border-radius:8px;border:1px solid var(--hair)}
+#visualCaption{font-size:14px;line-height:1.5;color:var(--dim);border-top:1px solid var(--hair);padding-top:10px}
+@media(max-width:1023px){
+  .game-grid{grid-template-columns:1fr}
+  #visualRail{order:-1}
+  .game-grid #app{max-width:880px}
+  #visualRail{position:static;max-height:none;flex-direction:column}
+  #stageCanvas{display:none}
+  #mapCanvas{max-height:180px;object-fit:cover;object-position:top}
+}
+@media print{
+  #visualRail{display:none !important}
+  .wrap{max-width:880px}
+  .game-grid{display:block}
+}

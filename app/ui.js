@@ -3,6 +3,7 @@
 const $ = (sel, el) => (el || document).querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 function say(msg) { const l = $('#live'); if (l) l.textContent = msg; }
+function Vemit(type, payload) { try { if (window.MSOBVisual && window.MSOBVisual.emit) window.MSOBVisual.emit(type, payload || {}); } catch (e) {} }
 
 let U = null;
 function newUI(game) {
@@ -114,6 +115,7 @@ function renderSetup() {
     U.game.sides.forEach((sd, i) => { sd.flavor = pick(i === 0 ? W.a : W.b); });
     W = null;
     startWeek(true);
+    Vemit('weekStart', { game: U.game, sideIdx: 0 });
   });
 }
 /* ---------- week / turn ---------- */
@@ -124,6 +126,7 @@ function startWeek(first) {
   U.lastShow = {};
   U.turnIdx = 0;
   if (!first) clog(`— week ${g.week} —`, false);
+  Vemit('weekStart', { game: g, sideIdx: U.turnIdx || 0 });
   startTurn();
 }
 function startTurn() {
@@ -302,18 +305,21 @@ function wire(s) {
     U.roadRoll = roll;
     if (roll === 1 && s.cash >= 8) {
       $('#roadOut').innerHTML = ` 💥 Breakdown! <button id="payFix">Pay $8</button> <button id="eatFix">Take it (−2 van)</button>`;
-      $('#payFix').addEventListener('click', () => { applyRoadEvent(s, 1, { payToPrevent: true }); clog(`🛣️ ${esc(s.name)} breakdown — paid $8, van saved. <i>${esc(roadFlavor(1, true, s, Math.random))}</i>`); U.roadDone = true; rerender(); });
-      $('#eatFix').addEventListener('click', () => { applyRoadEvent(s, 1, {}); clog(`🛣️ ${esc(s.name)} breakdown — van −2. <i>${esc(roadFlavor(1, false, s, Math.random))}</i>`); U.roadDone = true; rerender(); });
+      $('#payFix').addEventListener('click', () => { applyRoadEvent(s, 1, { payToPrevent: true }); clog(`🛣️ ${esc(s.name)} breakdown — paid $8, van saved. <i>${esc(roadFlavor(1, true, s, Math.random))}</i>`); U.visualWeather = 'clear'; Vemit('roadEvent', { game: U.game, sideIdx: U.turnIdx, roll: 1, kind: 'breakdown', label: 'breakdown, paid $8' }); U.roadDone = true; rerender(); });
+      $('#eatFix').addEventListener('click', () => { applyRoadEvent(s, 1, {}); clog(`🛣️ ${esc(s.name)} breakdown — van −2. <i>${esc(roadFlavor(1, false, s, Math.random))}</i>`); U.visualWeather = 'clear'; Vemit('roadEvent', { game: U.game, sideIdx: U.turnIdx, roll: 1, kind: 'breakdown', label: 'breakdown, van -2' }); U.roadDone = true; rerender(); });
       return;
     }
     const names = { 1: 'breakdown, van −2', 2: 'storm, hype −2', 3: 'wild crowd, +3 fans', 4: 'merch frenzy, +$6', 5: 'local press, +2 fame', 6: 'smooth miles, +$3 +1 morale' };
     applyRoadEvent(s, roll, {});
+    U.visualWeather = roll === 2 ? 'storm' : 'clear';
     clog(`🛣️ ${esc(s.name)} road die ${roll}: ${names[roll]}. <i>${esc(roadFlavor(roll, false, s, Math.random))}</i>`);
+    Vemit('roadEvent', { game: U.game, sideIdx: U.turnIdx, roll, kind: roll === 1 ? 'breakdown' : roll === 2 ? 'storm' : 'good', label: names[roll] });
     U.roadDone = true; rerender();
   });
   document.querySelectorAll('[data-offer]').forEach(b => b.addEventListener('click', () => {
     U.venue = b.getAttribute('data-offer');
     U.phase = 'play'; U.diceRolled = false;
+    try { const vv = venueById(U.venue); Vemit('offerPicked', { venueId: U.venue, venueName: vv.name, tier: vv.tier, game: U.game, sideIdx: U.turnIdx }); } catch (e) {}
     clog(`🎸 ${esc(s.name)} books <b>${esc(venueById(U.venue).name)}</b> (entry $${venueById(U.venue).entry}).`, true);
     clog(`<i>${esc(offerFlavor(U.venue, Math.random))}</i>`);
     rerender();
@@ -330,10 +336,11 @@ function wire(s) {
     try {
       const rec = resolveShow(g, s, U.venue, stageDice, U.hypeSpend);
       U.lastShow[U.turnIdx] = rec.show;
+      Vemit('showResolved', { game: g, sideIdx: U.turnIdx, rec, weather: U.visualWeather || 'clear' });
       clog(`🎤 ${esc(s.name)} @ ${esc(venueById(U.venue).name)}: show ${rec.show} vs D${rec.D} — <b>${rec.result === 'win' ? 'KILLED IT' : 'trainwreck'}</b> (+${rec.fans} fans, +$${rec.cash}, +${rec.fame} fame).`, true);
       clog(`<i>${esc(showFlavor(rec, venueById(U.venue), s, Math.random))}</i>`);
       const allVals = U.dice.map(d => d.v);
-      if (checkAnthem(s, allVals, 999 + g.week)) clog(`🔥 ${esc(anthemFlavor(Math.random))}`);
+      if (checkAnthem(s, allVals, 999 + g.week)) { clog(`🔥 ${esc(anthemFlavor(Math.random))}`); Vemit('anthem', { game: g, sideIdx: U.turnIdx }); }
       U.phase = 'work';
     } catch (e) { setError(e.message); return; }
     rerender();
@@ -342,7 +349,7 @@ function wire(s) {
   if (sb) sb.addEventListener('click', () => {
     const vals = U.dice.map((d, i) => (!U.stage.includes(i) && !d.used) ? d.v : null).filter(v => v !== null);
     const r = checkSong(s, vals, g.week);
-    if (r) { U.songDone = true; clog(r === 'album' ? `💿 ${esc(albumFlavor())}` : `✍️ ${esc(songFlavor(s.songs, Math.random))} (${s.songs}/8).`); }
+    if (r) { U.songDone = true; clog(r === 'album' ? `💿 ${esc(albumFlavor())}` : `✍️ ${esc(songFlavor(s.songs, Math.random))} (${s.songs}/8).`); Vemit(r === 'album' ? 'albumDone' : 'songWritten', { game: U.game, sideIdx: U.turnIdx, songs: s.songs, albums: s.albums }); }
     rerender();
   });
   document.querySelectorAll('[data-work]').forEach(b => b.addEventListener('click', () => {
@@ -352,6 +359,7 @@ function wire(s) {
       U.dice[+i].used = true;
       const txt = act === 'merch' ? `merch die ${U.dice[+i].v}: +$${r.cash}` : act === 'flyer' ? `flyer ${U.dice[+i].v}: +${r.fans} fans${r.hype ? ', +1 hype' : ''}` : `day job ${U.dice[+i].v}: +$${r.cash}${r.van ? ', van +1' : ''}`;
       clog(`⚒️ ${esc(s.name)} ${txt}. <i>${esc(workFlavor(act, U.dice[+i].v, r, s, Math.random))}</i>`);
+      Vemit('workDone', { game: U.game, sideIdx: U.turnIdx, action: act });
     } catch (e) { setError(e.message); return; }
     rerender();
   }));
@@ -360,7 +368,7 @@ function wire(s) {
   document.querySelectorAll('[data-shop]').forEach(b => b.addEventListener('click', () => {
     const what = b.getAttribute('data-shop');
     try {
-      if (what === 'roadie' || what === 'tech' || what === 'manager') { buyCrew(s, what); clog(`🤝 ${esc(s.name)} hires ${what}! <i>${esc(hireFlavor(what, Math.random))}</i>`); }
+      if (what === 'roadie' || what === 'tech' || what === 'manager') { buyCrew(s, what); clog(`🤝 ${esc(s.name)} hires ${what}! <i>${esc(hireFlavor(what, Math.random))}</i>`); Vemit('shopBuy', { game: U.game, sideIdx: U.turnIdx, what }); }
       else if (what === 'restock2') { const r = restock(s, 2); clog(`👕 pressed ${r.shirts} shirts (−$${r.cost}).`); }
       else if (what === 'mechanic') { mechanic(s); clog(`🔧 van +2 (−$4).`); }
     } catch (e) { setError(e.message); return; }
@@ -416,6 +424,7 @@ function doRoll() {
   U.dice = rollDice(n, Math.random).map((v, i) => ({ v, gold: !!(s.crew.manager && i === n - 1), mark: false, used: false }));
   U.diceRolled = true; U.justRolled = true;
   clog(`🎲 ${esc(s.name)} rolls ${U.dice.map(d => d.v).join(' ')}.`);
+  Vemit('diceRolled', { game: U.game, sideIdx: U.turnIdx, dice: U.dice.map(d => d.v) });
   renderGame();
 }
 function nextTurn(skipped) {
@@ -456,6 +465,7 @@ function endSeason() {
     const mine = rows[0].sc, theirs = U.rival.fans + U.rival.fame + Math.floor(U.rival.cash / 5);
     rivalHtml = `<div class="panel"><h3>Vs The Stagedivers</h3><p>You ${mine} — Them ${theirs}. <b>${mine >= theirs ? 'YOU HEADLINE. They open. Forever.' : 'They headline. Rematch?'}</b></p></div>`;
   }
+  Vemit('seasonEnd', { game: g, rank: rows[0] ? rows[0].rank : '' });
   app.innerHTML = `<h2>Season over — 12 weeks, countless miles</h2>${verdict}${rivalHtml}
   <table class="score"><tr><th>Band</th><th>Fans</th><th>Fame</th><th>Total</th><th>Rank</th></tr>
   ${rows.map(({ s, sc, rank }) => `<tr><td>${esc(s.name)}</td><td>${s.fans}</td><td>${s.fame}</td><td><b>${sc}</b></td><td>${esc(rank)}</td></tr>`).join('')}</table>

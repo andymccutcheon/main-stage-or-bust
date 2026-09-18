@@ -28,10 +28,22 @@
     </span>
     </div>
   </header>
-  <main id="app" aria-live="off"></main>
+  <div class="game-grid">
+    <main id="app" aria-live="off"></main>
+    <aside id="visualRail" aria-label="Tour visuals">
+      <canvas id="mapCanvas" width="480" height="360" role="img" aria-label="Tour map week 1"></canvas>
+      <canvas id="stageCanvas" width="480" height="360" role="img" aria-label="Venue stage"></canvas>
+      <div id="visualCaption" aria-live="polite">Load the van — twelve weeks, one stage.</div>
+    </aside>
+  </div>
   <footer>Print sheets: <a href="../print/sheet.html">band sheet</a> · <a href="../print/rules.html">rules</a>.</footer>
 </div>
 <div id="live" class="sr" aria-live="polite" style="position:absolute;left:-9999px"></div>
+<script src="visual/palette.js"></script>
+<script src="visual/sprites.js"></script>
+<script src="visual/map.js"></script>
+<script src="visual/stage.js"></script>
+<script src="visual/director.js"></script>
 <script src="engine.js"></script>
 <script src="narrative.js"></script>
 <script src="press.js"></script>

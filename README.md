@@ -16,6 +16,17 @@ Palette: five accents (Safety Orange, Xerox Pink, Slime Lime, Copier Blue, Riot 
 
 Keyboard: number keys stage/unstage dice · everything is also clickable/touchable.
 
+## Tour visuals (split-screen 16-bit)
+Wide screens (≥1024px) add a sticky right rail: a 12-stop journey map (top) and a
+parametric venue stage (bottom) plus a one-line caption. Both canvases are 480×360,
+CSS-scaled with `image-rendering: pixelated`. The renderer is read-only — the engine
+never knows it exists; `app/visual/director.js` is the only file that touches the DOM
+outside its canvases, consuming UI events (`weekStart | offerPicked | diceRolled |
+showResolved | workDone | shopBuy | songWritten | albumDone | anthem | roadEvent |
+seasonEnd`). Art is procedural and offline (`app/visual/`, see `ASSETS.md` manifest);
+new palettes re-skin art with zero changes. Narrow screens get a compact map strip;
+print hides the rail. Reduced-motion users get jump-cut static frames.
+
 ## Play on paper
 Open `print/sheet.html` + `print/rules.html` in a browser → Print → Letter/A4.
 You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white friendly.

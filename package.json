@@ -4,7 +4,7 @@
   "private": true,
   "description": "MAIN STAGE OR BUST roll-and-write: print-and-play + web game",
   "scripts": {
-    "test": "node --test app/engine.test.js tests/narrative.test.js tests/press.test.js && node tests/smoke-season.js && node app/sim.js 10000 1",
+    "test": "node --test app/engine.test.js tests/narrative.test.js tests/press.test.js tests/visual.test.js && node tests/smoke-season.js && node app/sim.js 10000 1",
     "start": "node server.cjs"
   }
 }
