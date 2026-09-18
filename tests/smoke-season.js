@@ -11,14 +11,7 @@ function playSideWeek(g, si, rng, diceN) {
   const offers = E.drawOffers(g, si, rng);
   offers.sort((a, b) => (b.fame * 2 + b.cash - b.entry) - (a.fame * 2 + a.cash - a.entry));
   const venue = (s.cash >= offers[0].entry ? offers[0] : offers[1]);
-  let dice = E.rollDice(diceN || (s.crew.manager ? 6 : 5), rng);
-  for (let p = 0; p < 2; p++) {
-    const st = dice.slice().sort((a, b) => b - a);
-    const bonus = s.skill + s.albums + (s.crew.tech ? 1 : 0);
-    if (st[0] + st[1] + bonus + Math.min(2, Math.floor(s.hype / 2)) >= venue.D + (g.coopBump || 0) || s.caffeine <= 0) break;
-    s.caffeine -= 1;
-    dice = dice.map(d => (d >= 5 ? d : E.rollDie(rng)));
-  }
+  const dice = E.rollDice(diceN || (s.crew.manager ? 6 : 5), rng);
   E.checkAnthem(s, dice, 999 + g.week);
   const sorted = dice.slice().sort((a, b) => b - a);
   const short = (venue.D + (g.coopBump || 0)) - (sorted[0] + sorted[1] + s.skill + s.albums + (s.crew.tech ? 1 : 0));

@@ -20,18 +20,8 @@ function playSeason(seed, opts) {
     scored.sort((a, b) => b.score - a.score);
     let venue = scored[0].v;
     if (s.cash < venue.entry && s.cash >= scored[1].v.entry) venue = scored[1].v;
-    let dice = E.rollDice(s.crew.manager ? 6 : 5, rng);
-    // rerolls: keep 5-6, reroll rest if stage looks short
+    const dice = E.rollDice(s.crew.manager ? 6 : 5, rng);
     const bonus = s.skill + s.albums + (s.crew.tech ? 1 : 0);
-    for (let p = 0; p < 2; p++) {
-      const st = dice.slice().sort((a, b) => b - a);
-      const proj = st[0] + st[1] + bonus + Math.min(2, Math.floor(s.hype / 2));
-      if (proj >= venue.D + game.coopBump || s.caffeine <= 0) break;
-      s.caffeine -= 1;
-      const keep = dice.filter(d => d >= 5);
-      const n = dice.length - keep.length;
-      dice = keep.concat(E.rollDice(n, rng));
-    }
     E.checkAnthem(s, dice, w);
     const sorted0 = dice.slice().sort((a, b) => b - a);
     const stage0 = [sorted0[0], sorted0[1]];

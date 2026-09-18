@@ -103,7 +103,7 @@ function roadFlavor(roll, avoided, side, rng) {
     3: `Rest-stop encounter: a caravan of fans heading the same way. +3 fans, instant caravan.`,
     4: `Someone at the truck stop buys the whole life story AND six shirts. +$6. America.`,
     5: `College paper runs a photo: "LOCAL BAND ACTUALLY GOOD?" +2 fame. Mom frames it.`,
-    6: `Perfect miles. Windows down, new song on repeat, nobody fights. +1 caffeine, +1 morale.`,
+    6: `Perfect miles. Windows down, new song on repeat, nobody fights. Found $3 in the seat cracks. +1 morale.`,
   };
   return T[roll] || narPick(r, [`${v} hums along. The white lines keep time.`]);
 }

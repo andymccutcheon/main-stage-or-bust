@@ -2,7 +2,7 @@
 /* MAIN STAGE OR BUST — shared rules engine (no DOM, no deps). v1.0. */
 
 const VENUES = [
-  { id: 'coffee',  name: 'Coffee House',        tier: 1, D: 8,  cash: 4,  fame: 2, fansBonus: 1, entry: 0, caffeine: true,  blurb: 'Free lattes. +1 Caffeine.' },
+  { id: 'coffee',  name: 'Coffee House',        tier: 1, D: 8,  cash: 4,  fame: 2, fansBonus: 1, entry: 0, hype: true, blurb: 'Free lattes. Wired crowd. +1 Hype.' },
   { id: 'vfw',     name: 'VFW Hall',            tier: 1, D: 9,  cash: 6,  fame: 3, fansBonus: 2, entry: 0 },
   { id: 'house',   name: 'House Show',          tier: 1, D: 10,  cash: 8,  fame: 4, fansBonus: 3, entry: 0 },
   { id: 'record',  name: 'Record Store',        tier: 2, D: 10,  cash: 8,  fame: 5, fansBonus: 3, entry: 2 },
@@ -13,7 +13,7 @@ const VENUES = [
   { id: 'warped',  name: 'Main Stage',   tier: 4, D: 17, cash: 20, fame: 12, fansBonus: 10, entry: 6 },
 ];
 const VENUE_BY_ID = Object.fromEntries(VENUES.map(v => [v.id, v]));
-const CAPS = { hype: 10, morale: 5, van: 6, merch: 12, caffeine: 5, skill: 3 };
+const CAPS = { hype: 10, morale: 5, van: 6, merch: 12, skill: 3 };
 const COSTS = { roadie: 30, tech: 35, managerHire: 25, managerWage: 3, mechanic: 4 };
 const RANKS = [
   [240, 'Main Stage Headliner'], [200, 'Main Stage Bound'], [160, 'Road Dogs'],
@@ -54,7 +54,7 @@ function createSide(name, difficulty) {
     name: name || 'Your Band',
     cash: bonus ? 25 : 20, fans: 0, fame: 0,
     hype: 0, morale: 5, van: 6, merch: 6,
-    caffeine: 2, stars: 0, skill: 0,
+    stars: 0, skill: 0,
     songs: 0, albums: 0, songUsedWeek: 0, anthemWeek: 0,
     crew: { roadie: false, tech: false, manager: false },
     restNext: false, shopNext: false, results: [],
@@ -112,7 +112,6 @@ function startWeekUpkeep(game) {
 function forcedRest(game, side) {
   side.cash += 5;
   side.morale = clamp(side.morale + 3, 0, CAPS.morale);
-  side.caffeine = clamp(side.caffeine + 1, 0, CAPS.caffeine);
   side.restNext = false;
   side.results.push({ week: game.week, venue: 'REST', result: 'rest' });
 }
@@ -157,7 +156,7 @@ function resolveShow(game, side, venueId, stageDice, hypeSpend) {
   const show = stageDice[0] + stageDice[1] + side.skill + side.albums + (side.crew.tech ? 1 : 0) + hypeSpend;
   const success = show >= D;
   side.cash -= venue.entry;
-  if (venue.caffeine) side.caffeine = clamp(side.caffeine + 1, 0, CAPS.caffeine);
+  if (venue.hype) side.hype = clamp(side.hype + 1, 0, CAPS.hype);
   let fansGained, cashGained, fameGained;
   if (success) {
     cashGained = venue.cash; fameGained = venue.fame;
@@ -171,11 +170,6 @@ function resolveShow(game, side, venueId, stageDice, hypeSpend) {
     side.cash += cashGained; side.fans += fansGained;
     side.morale = clamp(side.morale - 1, 0, CAPS.morale);
     if (side.morale === 0) side.restNext = true;
-    if (game.difficulty === 'grind') { /* no mercy caffeine on grind */ }
-    else if (side.results.length >= 2) {
-      const last = side.results.slice(-2);
-      if (last.every(r => r.result === 'fail')) side.caffeine = clamp(side.caffeine + 1, 0, CAPS.caffeine);
-    }
   }
   const rec = { week: game.week, venue: venue.id, result: success ? 'win' : 'fail', show, D, fans: fansGained, cash: cashGained, fame: fameGained };
   side.results.push(rec);
@@ -218,7 +212,7 @@ function applyRoadEvent(side, roll, opts) {
     case 3: side.fans += 3; return 'crowd';
     case 4: side.cash += 6; return 'frenzy';
     case 5: side.fame += 2; return 'press';
-    default: side.caffeine = clamp(side.caffeine + 1, 0, CAPS.caffeine); side.morale = clamp(side.morale + 1, 0, CAPS.morale); return 'smooth';
+    default: side.cash += 3; side.morale = clamp(side.morale + 1, 0, CAPS.morale); return 'smooth';
   }
 }
 
@@ -292,14 +286,13 @@ function rivalTurn(rival, week, rng) {
 
 function validateSide(s) {
   const bad = [];
-  for (const k of ['cash', 'fans', 'fame', 'hype', 'morale', 'van', 'merch', 'caffeine', 'stars', 'skill', 'songs', 'albums']) {
+  for (const k of ['cash', 'fans', 'fame', 'hype', 'morale', 'van', 'merch', 'stars', 'skill', 'songs', 'albums']) {
     if (!Number.isFinite(s[k])) bad.push(k);
   }
   if (s.hype < 0 || s.hype > CAPS.hype) bad.push('hype-cap');
   if (s.morale < 0 || s.morale > CAPS.morale) bad.push('morale-cap');
   if (s.van < 0 || s.van > CAPS.van) bad.push('van-cap');
   if (s.merch < 0 || s.merch > CAPS.merch) bad.push('merch-cap');
-  if (s.caffeine < 0 || s.caffeine > CAPS.caffeine) bad.push('caffeine-cap');
   if (s.skill < 0 || s.skill > CAPS.skill) bad.push('skill-cap');
   if (s.songs < 0 || s.songs > 8) bad.push('songs-cap');
   if (s.albums < 0 || s.albums > 2) bad.push('albums-cap');

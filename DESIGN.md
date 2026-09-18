@@ -7,39 +7,39 @@ You named your band in a garage. Twelve weeks later you are either playing the m
 ## 2. Core gameplay loop (one week, x12)
 1. **Road check.** Weeks 4, 7, 10: roll 1d6 on the Road Table. Otherwise nothing.
 2. **Get offers.** Draw 2 gig offers (see S3). Pick 1, pay its entry/travel cost. The other is discarded.
-3. **Soundcheck roll.** Roll 5 white d6 (+1 gold d6 if Manager hired). Optional: spend Caffeine for rerolls (max 2 passes/week, 1 token each, reroll any subset).
+3. **Soundcheck roll.** Roll 5 white d6 (+1 gold d6 if Manager hired). No rerolls — stage what you roll.
 4. **Songwriting check.** After staging (step 5), if your 3 leftover work dice contain a pair, you may check off 1 Song box (once per week max). Staging your best dice competes with keeping a pair — that tension is intentional.
 5. **Play the show.** Place any 2 dice on stage. Optional Hype spend (2 Hype = +1 Show, max +2). Compare Show Hype vs venue Difficulty.
 6. **Work the room.** Assign each of the 3 leftover dice to Merch, Flyer, or Day Job (see S4).
 7. **Get paid / get hurt.** Apply success or fail payouts. Mark Skill stars, check album bonuses, repair via Roadie.
 8. **Week end.** Discard offers, reset Hype cap, check Morale/Van fail states, advance week marker.
 
-Forced rest: if Morale is 0 at week start, you skip steps 2–7: gain +$5, +3 Morale, +1 Caffeine.
+Forced rest: if Morale is 0 at week start, you skip steps 2–7: gain +$5, +3 Morale.
 
 ## 3. Dice / random-input system
 - 5x white d6 every week. 1x gold d6 while Manager is employed ($20 hire + $3/week wage, deducted at week start; fire for free anytime).
-- 2 reroll passes per week max, each costs 1 Caffeine. Reroll any subset of all dice (gold included).
-- Road Table (1d6, weeks 4/7/10): 1 Breakdown (-2 Van, or pay $8 to prevent), 2 Storm (-2 Hype, min 0), 3 Wild crowd (+3 Fans), 4 Merch frenzy (+$6), 5 Local press (+2 Fame), 6 Smooth miles (+1 Caffeine, +1 Morale, max caps).
+- No rerolls. Mitigation lives in Hype spend (banked promo converts 2:1, max +2/show), the Manager gold die, and offer/stage choice.
+- Road Table (1d6, weeks 4/7/10): 1 Breakdown (-2 Van, or pay $8 to prevent), 2 Storm (-2 Hype, min 0), 3 Wild crowd (+3 Fans), 4 Merch frenzy (+$6), 5 Local press (+2 Fame), 6 Smooth miles (+$3 gas money, +1 Morale).
 - Offers: 2 venues drawn from a mixed pool = highest unlocked tier + one tier below (50/50 each card). The Main Stage enters the pool only in weeks 10+, Fame 45+, at 20% replacement chance. Rejected offer is discarded (no penalty).
-- Why: 2 offers from a constrained pool = real choice (safe cash vs risky fame) without analysis paralysis; capped rerolls keep luck mitigable but not erasable.
+- Why: 2 offers from a constrained pool = real choice (safe cash vs risky fame) without analysis paralysis; fixed dice keep every week legible, and the Hype economy is the luck valve.
 
 ## 4. Player decisions and mitigation
 - Offer pick: safe money vs fame reach. Entry costs gate greed.
-- Reroll timing: burn Caffeine early for a big room or save it (2 passes max).
+- Hype timing: spend banked Hype to flip close shows; the +2/show cap prevents hoard-then-stomp.
 - Stage dice: highest pair vs split (a 6 saved for merch can beat two 4s on stage, sometimes).
-- Hype spend: convert banked Promo into guaranteed points, max +3/show prevents hoard-then-stomp.
+- Hype earn: flyering with 5+ dice and Coffee House crowds build the bank you spend on reach rooms.
 - Work assignment: every leftover die matters (cash now / fans now / van later).
 - Song vs cash: pairs tempt you to write instead of selling; albums pay late.
 - Crew buys: Roadie (consistency), Tech (power), Manager (extra die at a weekly cost).
 - Restock/repair timing with scarce cash.
 
 ## 5. Player sheet structure
-Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with tier gates (T2 @12, T3 @26, Main Stage pool @45) | Fans box | Cash box | Hype 0–10 | Morale 0–5 | Van 0–6 | Merch stock 0–12 | Caffeine 0–5 | Skill stars (every 3rd success = +1 Skill, max +3) | Songs: 8 boxes in 2 albums of 4 | Crew checkboxes (Roadie/Guitar Tech/Manager) | Week tracker 1–12.
+Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with tier gates (T2 @12, T3 @26, Main Stage pool @45) | Fans box | Cash box | Hype 0–10 | Morale 0–5 | Van 0–6 | Merch stock 0–12 | Skill stars (every 4th success = +1 Skill, max +3) | Songs: 8 boxes in 2 albums of 4 | Crew checkboxes (Roadie/Guitar Tech/Manager) | Week tracker 1–12.
 
 ## 6. Venues, scoring, victory
 | Venue | Tier | D | Cash | Fame | Fans bonus | Entry |
 |---|---|---|---|---|---|---|
-| Coffee House | T1 | 8 | 4 | 2 | +1 | $0, +1 Caffeine |
+| Coffee House | T1 | 8 | 4 | 2 | +1 | $0, +1 Hype |
 | VFW Hall | T1 | 9 | 6 | 3 | +2 | $0 |
 | House Show | T1 | 10 | 8 | 4 | +3 | $0 |
 | Record Store | T2 | 10 | 8 | 5 | +3 | $2 |
@@ -61,16 +61,16 @@ Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with
 Beat-the-rank game on one sheet vs the 12-week clock. Optional computer opponent ("The Stagedivers") for head-to-head practice: rival auto-picks the higher-tier offer, virtual success rate by table (T1 80%, T2 60%, T3 40%, Main 25%), gains venue averages on success / half cash on fail, +weekly fans 6 +/- 3. No upkeep beyond one log line.
 
 ## 8. Multiplayer implementation
-- Coop (2p, one band): shared sheet, shared resources, 6 dice pool (each player rolls 3, gold added if Manager), joint calls, shared Caffeine. Difficulty +1 to all D (tested tuning lever). Both players must agree on Hype spend and purchases; tie-break: player with the birthday closest to tour start decides.
+- Coop (2p, one band): shared sheet, shared resources, 6 dice pool (each player rolls 3, gold added if Manager), joint calls, shared Hype pool. Difficulty +1 to all D (tested tuning lever). Both players must agree on Hype spend and purchases; tie-break: player with the birthday closest to tour start decides.
 - Versus (2p, hot-seat): separate sheets, shared offer pair each week (either may take either venue, both may take the same), simultaneous or alternating rolls, compare Show Hype for Headliner bonus. Zero downtime beyond watching one 5-dice roll.
 - Tradeoff: shared offers create interaction without take-that rules or extra components.
 
 ## 9. Components (physical)
-1 sheet per band per season (double-sided: log front, rules back), 5 white d6 + 1 gold d6 per table, 2 pencils, optional 12 venue cards (or 2d6 offer table on sheet back). No tokens needed: Caffeine/Morale/Van/Merch/Hype are boxes to cross off. Dry-erase sleeves supported.
+1 sheet per band per season (double-sided: log front, rules back), 5 white d6 + 1 gold d6 per table, 2 pencils, optional 12 venue cards (or 2d6 offer table on sheet back). No tokens needed: Morale/Van/Merch/Hype are boxes to cross off. Dry-erase sleeves supported.
 
 ## 10. Balance considerations (sim-verified, see BALANCE.md)
-- Best-2-of-5d6 raw: P(>=10)=65%, >=12=20%, >=14=0% (impossible). With keep-5s reroll: >=10=91%, >=12=43%. Difficulties sit in that band: T1 D8–10 (safe starters, poor pay), T2 D10–12 (real tension unbonused), T3 D13–14 (needs engine), Main Stage D17 (needs +5 engine minimum — dice max 12 — a deliberate gate: you cannot walk onto the main stage without skills+songs+crew).
-- 10k-season heuristic (near-optimal reroll/stage/hype play): win rate 85%, mean score 210, Main Stage played 39%, won ~29% of those, bankruptcy 0%. Rank spread covers Local Opener to Headliner with median Main Stage Bound.
+- Best-2-of-5d6, no rerolls: P(>=10)=65%, >=11=43%, >=12=20%, >=14 impossible. Difficulties sit in that band: T1 D8–10 (safe starters, poor pay), T2 D10–12 (real tension unbonused), T3 D13–14 (needs engine), Main Stage D17 (needs +5 engine minimum — dice max 12 — a deliberate gate: you cannot walk onto the main stage without skills+songs+crew).
+- 10k-season heuristic (near-optimal stage/hype play, no rerolls): win rate 75%, mean score 189, Main Stage played 27%, won ~20% of those, bankruptcy 0%. Rank spread covers Local Opener to Headliner with median Road Dogs.
 - Anti-dominant checks: merch turtling cannot pass Fame gates (T3 needs 26); fame rushing bleeds entry fees + breakdowns; Manager ($25+$3/wk) only pays if the gold die flips 2+ shows/season; Hype capped +2/show prevents hoard-then-stomp.
 - Known soft spots for human playtest: Van-0 shop-week spiral, coop D+1 feel, versus Headliner swing. Economy is loose for winners by design (bankruptcy <1% skilled); Grind difficulty (start $15, road events from week 2) is the pressure valve.
 

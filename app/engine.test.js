@@ -53,11 +53,11 @@ test('skill grows every 3 stars, capped', () => {
   assert.equal(s.skill, 2);
 });
 
-test('coffee house grants caffeine', () => {
+test('coffee house grants hype', () => {
   const g = E.createGame({ mode: 'solo' });
-  const s = g.sides[0]; s.caffeine = 0;
+  const s = g.sides[0]; s.hype = 0;
   E.resolveShow(g, s, 'coffee', [1, 1], 0);
-  assert.equal(s.caffeine, 1);
+  assert.equal(s.hype, 1);
 });
 
 test('merch work respects stock; roadie adds free shirts', () => {
@@ -103,7 +103,7 @@ test('road events all apply', () => {
   E.applyRoadEvent(s, 3, {}); assert.equal(s.fans, 3);
   E.applyRoadEvent(s, 4, {}); assert.equal(s.cash, 26);
   E.applyRoadEvent(s, 5, {}); assert.equal(s.fame, 2);
-  E.applyRoadEvent(s, 6, {}); assert.equal(s.caffeine, 3);
+  E.applyRoadEvent(s, 6, {}); assert.equal(s.cash, 29); assert.equal(s.morale, 5);
   const rich = E.createSide('rich'); rich.cash = 50;
   assert.equal(E.applyRoadEvent(rich, 1, { payToPrevent: true }), 'breakdown-avoided');
   assert.equal(rich.van, 6); assert.equal(rich.cash, 42);

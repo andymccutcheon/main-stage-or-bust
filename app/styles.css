@@ -167,11 +167,6 @@ footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(
 .hero-tag{font-size:20px;line-height:1.55;max-width:58ch;margin:26px 0 18px;color:var(--ink)}
 
 /* Soundcheck: segmented control, kbd hints, stage readout, work rows */
-.seg{display:inline-flex;border:1px solid #4a4741;border-radius:8px;overflow:hidden;margin:4px 0}
-.segbtn{border:none;border-radius:0;background:transparent;box-shadow:none;color:var(--dim);padding:9px 20px}
-.segbtn:hover:not(:disabled){color:var(--ink)}
-.segbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.segbtn[aria-pressed="true"]:hover{color:var(--accent-ink)}
 .mode-hint{color:var(--dim);margin:10px 0 0}
 .keys{color:var(--dim);font-size:13px}
 kbd{display:inline-block;border:1px solid #4a4741;border-bottom-width:2px;border-radius:4px;padding:0 7px;font:12px/1.7 ui-monospace,Menlo,Consolas,monospace;background:#101010;color:var(--ink)}

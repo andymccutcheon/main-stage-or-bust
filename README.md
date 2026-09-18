@@ -14,7 +14,7 @@ Type: display face is self-hosted Boogaloo (`app/fonts/`, OFL licensed) with Ari
 
 Palette: five accents (Safety Orange, Xerox Pink, Slime Lime, Copier Blue, Riot Red) via the header swatches — saved per browser, poster yellow stays put.
 
-Keyboard: `1–7` act on dice · `S` stage mode · `K` reroll mode · everything is also clickable/touchable.
+Keyboard: number keys stage/unstage dice · everything is also clickable/touchable.
 
 ## Play on paper
 Open `print/sheet.html` + `print/rules.html` in a browser → Print → Letter/A4.
@@ -27,7 +27,7 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 - **Hype Press (invisible):** every flyer headline is written by Muse Spark via OpenRouter through the game's own `/api/flavor` proxy — the key lives in the `OPENROUTER_API_KEY` env var, never in the browser. There is no toggle and no branding: flavor only (the dice are still the law), silent fallback to the offline house zine. Local dev: `OPENROUTER_API_KEY=sk-or-… npm start`.
 
 ## The week (both versions, same rules)
-1. Road die (weeks 4/7/10) · 2. Pick 1 of 2 gig offers · 3. Roll, reroll with Caffeine
+1. Road die (weeks 4/7/10) · 2. Pick 1 of 2 gig offers · 3. Roll (no rerolls — play what you roll)
 4. Stage 2 dice (+Hype, max +2) vs venue Difficulty · 5. Work 3 leftover dice (merch/flyer/day job)
 6. Pairs in leftovers write songs (4 = album) · 7. Payouts. Final = Fans + Fame + ⌊Cash/5⌋ + Albums×10.
 

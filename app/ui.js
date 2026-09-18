@@ -8,7 +8,7 @@ let U = null;
 function newUI(game) {
   return {
     game, turnIdx: 0, weekOffers: [], venue: null,
-    dice: [], clickMode: 'stage', passes: 0, stage: [], hypeSpend: 0,
+    dice: [], stage: [], hypeSpend: 0,
     phase: 'offers', roadDone: false, roadRoll: null, lastShow: {},
     rival: game.mode === 'rival' ? { fame: 0, fans: 0, cash: 20 } : null,
     log: [], songDone: false, error: null,
@@ -128,11 +128,11 @@ function startWeek(first) {
 }
 function startTurn() {
   const g = U.game, s = curSide();
-  U.venue = null; U.dice = []; U.stage = []; U.hypeSpend = 0; U.passes = 0;
-  U.phase = 'offers'; U.roadDone = false; U.roadRoll = null; U.songDone = false; U.clickMode = 'stage';
+  U.venue = null; U.dice = []; U.stage = []; U.hypeSpend = 0;
+  U.phase = 'offers'; U.roadDone = false; U.roadRoll = null; U.songDone = false;
   setError(null);
   clog(`<i>${esc(weekIntro(g, s, Math.random))}</i>`);
-  if (s.restNext) { forcedRest(g, s); clog(`😴 ${esc(s.name)} rest up (forced): +$5, +3 morale, +1 caffeine.`); return nextTurn(true); }
+  if (s.restNext) { forcedRest(g, s); clog(`😴 ${esc(s.name)} rest up (forced): +$5, +3 morale.`); return nextTurn(true); }
   if (s.shopNext) { forcedShop(g, s); clog(`🔧 ${esc(s.name)} stuck in the shop: -$4, van +3.`); return nextTurn(true); }
   renderGame();
 }
@@ -150,10 +150,9 @@ function statHtml(s, active) {
       ${tip('Fans', s.fans, 'THE SCORE, mostly. Final = Fans + Fame + Cash÷5 + Albums×10. Win shows, flyer neighborhoods, finish albums.', true)}
       ${tip('Fame', s.fame, 'Unlocks bigger rooms: clubs at 12, big rooms at 26, Main Stage pool at 45+. Win shows and land press to climb.')}
       ${tip('Hype', s.hype, 'Banked energy. Spend 2 for +1 on any show (max +2). Earn it flyering with 5+ and surviving ugly weeks.')}
-      ${tip('Morale', '♥'.repeat(s.morale) + '♡'.repeat(CAPS.morale - s.morale), 'Band spirit. Failed shows cost 1. At 0, next week is forced rest: +$5, +3 morale, +1 caffeine.')}
+      ${tip('Morale', '♥'.repeat(s.morale) + '♡'.repeat(CAPS.morale - s.morale), 'Band spirit. Failed shows cost 1. At 0, next week is forced rest: +$5, +3 morale.')}
       ${tip('Van', '▮'.repeat(s.van) + '▯'.repeat(CAPS.van - s.van), 'The legs. Breakdowns damage it. At 0, next week is forced shop: −$4, van +3. Patch it with day-job 6s or the mechanic.')}
       ${tip('Merch', s.merch, 'Shirts are money. Each merch die sells min(die, stock) shirts × $2. Restock anytime: $1 per 2 shirts.')}
-      ${tip('Caff', s.caffeine, 'Rerolls. 1 token rerolls any dice, max 2 passes per show week. Coffee Houses and smooth miles top it up.')}
     </div>
     <div class="songs" tabindex="0" data-tip="Pairs in leftover dice write songs (1 per week). 4 songs = an album: +5 fame, +10 fans, +1 show hype forever.">${songs}</div>
     <small class="dim crewline" tabindex="0" data-tip="Hired help. Roadie: +2 free merch sales per show, van +1 weekly. Guitar tech: +1 show hype. Manager: gold die for $3/week."><span>crew:</span>${['roadie', 'tech', 'manager'].map(c => `<span class="crewmate">${s.crew[c] ? '✅' : '⬜'} ${c}</span>`).join('<span class="crewdot" aria-hidden="true">·</span>')}</small>
@@ -184,7 +183,7 @@ function stepperHtml() {
   const steps = [
     ['Hit the road', roadWeek ? 'Road die first: breakdowns eat van + cash.' : 'No toll this week — smooth miles.'],
     ['Book the gig', '2 offers. Big rooms pay fame, demand hotter shows.'],
-    ['Soundcheck', 'Roll the dice. Caffeine rerolls rescue bad nights.'],
+    ['Soundcheck', 'Roll the dice. No second chances — stage them well.'],
     ['Play the show', 'Stage 2 dice vs Difficulty. Win = fans + fame; fail = half pay, morale down.'],
     ['Work the room', 'Leftover dice become merch $, flyer fans, day-job repairs. Pairs write songs.'],
     ['Flyer & load out', 'Recap the night, check the band, next city.'],
@@ -198,7 +197,7 @@ function offerCard(v) {
   return `<div class="card${v.id === 'warped' ? ' warped' : ''}">
     <h3>${esc(v.name)}${v.id === 'warped' ? ' ★' : ''}</h3>
     <ul><li>Difficulty ${v.D}</li><li>Pays $${v.cash} + ${v.fame} fame</li>
-    <li>+${v.fansBonus} fans + margin</li><li>Entry $${v.entry}${v.caffeine ? ' · +1☕' : ''}</li></ul>
+    <li>+${v.fansBonus} fans + margin</li><li>Entry $${v.entry}${v.hype ? ' · +1 hype' : ''}</li></ul>
     <button data-offer="${v.id}">Play here</button></div>`;
 }
 
@@ -245,28 +244,20 @@ function diceHtml(s) {
   const bonus = s.skill + s.albums + (s.crew.tech ? 1 : 0);
   const sum = staged.reduce((a, i) => a + U.dice[i].v, 0);
   const proj = U.dice.length && staged.length === 2 ? sum + bonus + U.hypeSpend : null;
-  let html = `<div class="panel"><h3>🎲 ${U.phase === 'done' ? 'Show played' : 'Soundcheck'} ${U.passes ? `<small class="dim">(rerolls used ${U.passes}/2)</small>` : ''}</h3>`;
+  let html = `<div class="panel"><h3>🎲 ${U.phase === 'done' ? 'Show played' : 'Soundcheck'}</h3>`;
   if (U.phase === 'play') {
-    html += `<div class="seg" role="group" aria-label="What clicking dice does">
-      <button class="segbtn" data-mode="stage" aria-pressed="${U.clickMode === 'stage'}">Stage</button>
-      <button class="segbtn" data-mode="reroll" aria-pressed="${U.clickMode === 'reroll'}">Reroll</button></div>
-    <p class="mode-hint">${U.clickMode === 'stage' ? 'Click dice to put them <b>on stage</b> (need 2).' : 'Click dice to <b>mark them</b>, then reroll — 1☕ per pass, 2 passes max.'}</p>`;
+    html += `<p class="mode-hint">Click dice to put them <b>on stage</b> (need 2) — click again to take one back. No rerolls: play what you roll.</p>`;
   }
   html += `<div class="dice${U.justRolled ? ' roll-in' : ''}">` + U.dice.map((d, i) => {
     if (d.used) return `<button class="die slot" disabled title="used">${d.v}</button>`;
     if (staged.includes(i)) return `<button class="die" data-die="${i}" aria-pressed="true" title="on stage — click to remove">★${d.v}</button>`;
     if (U.phase !== 'play') return `<button class="die${d.gold ? ' gold' : ''}" disabled>${d.v}</button>`;
-    const marked = !!d.mark;
-    return `<button class="die${d.gold ? ' gold' : ''}" data-die="${i}" aria-pressed="${marked}" title="die ${d.v}${d.gold ? ' (gold)' : ''} — click: ${U.clickMode}">${d.v}</button>`;
+    return `<button class="die${d.gold ? ' gold' : ''}" data-die="${i}" aria-pressed="false" title="die ${d.v}${d.gold ? ' (gold)' : ''} — click to stage or unstage">${d.v}</button>`;
   }).join('') + `</div>`;
   if (U.phase === 'play') {
-    const marked = U.dice.filter(d => d.mark && !d.used && !U.stage.includes(U.dice.indexOf(d))).length;
-    const rrWhy = !U.diceRolled ? 'Roll first' : U.passes >= 2 ? 'No passes left (2 per show max)' : s.caffeine < 1 ? 'No caffeine — play a Coffee House or catch a smooth road day' : marked === 0 ? 'Mark dice first (Reroll mode, or K key)' : `Reroll ${marked} marked dice`;
     html += `<div class="shoprow">
       <button id="rollBtn"${U.diceRolled ? ' disabled' : ' class="primary"'}>${U.diceRolled ? 'Rolled' : 'Roll ' + diceCount(s) + ' dice'}</button>
-      <button id="rerollBtn"${!U.diceRolled || marked === 0 || s.caffeine < 1 || U.passes >= 2 ? ' disabled' : ''} title="${rrWhy}">Reroll (${marked}) · 1☕</button>
-      <span class="dim">passes ${U.passes}/2 · ☕ ${s.caffeine}</span>
-    </div><p class="keys"><kbd>1</kbd>–<kbd>${Math.max(U.dice.length, 1)}</kbd> act on dice · <kbd>S</kbd> stage · <kbd>K</kbd> reroll</p>`;
+    </div><p class="keys"><kbd>1</kbd>–<kbd>${Math.max(U.dice.length, 1)}</kbd> stage or unstage dice</p>`;
     if (!U.diceRolled) html += `<p class="dim">The kit is packed. Roll when ready.</p>`;
     const D = v.D + (U.game.coopBump || 0);
     html += `<h3>On stage</h3><div class="stage-grid">` +
@@ -315,7 +306,7 @@ function wire(s) {
       $('#eatFix').addEventListener('click', () => { applyRoadEvent(s, 1, {}); clog(`🛣️ ${esc(s.name)} breakdown — van −2. <i>${esc(roadFlavor(1, false, s, Math.random))}</i>`); U.roadDone = true; rerender(); });
       return;
     }
-    const names = { 1: 'breakdown, van −2', 2: 'storm, hype −2', 3: 'wild crowd, +3 fans', 4: 'merch frenzy, +$6', 5: 'local press, +2 fame', 6: 'smooth miles, +1☕ +1 morale' };
+    const names = { 1: 'breakdown, van −2', 2: 'storm, hype −2', 3: 'wild crowd, +3 fans', 4: 'merch frenzy, +$6', 5: 'local press, +2 fame', 6: 'smooth miles, +$3 +1 morale' };
     applyRoadEvent(s, roll, {});
     clog(`🛣️ ${esc(s.name)} road die ${roll}: ${names[roll]}. <i>${esc(roadFlavor(roll, false, s, Math.random))}</i>`);
     U.roadDone = true; rerender();
@@ -327,20 +318,9 @@ function wire(s) {
     clog(`<i>${esc(offerFlavor(U.venue, Math.random))}</i>`);
     rerender();
   }));
-  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => { U.clickMode = b.getAttribute('data-mode'); rerender(); }));
   document.querySelectorAll('[data-die]').forEach(b => b.addEventListener('click', () => actOnDie(parseInt(b.getAttribute('data-die'), 10))));
   const rollBtn = $('#rollBtn');
   if (rollBtn) rollBtn.addEventListener('click', doRoll);
-  const rr = $('#rerollBtn');
-  if (rr) rr.addEventListener('click', () => {
-    const idx = U.dice.map((d, i) => (d.mark && !U.stage.includes(i) && !d.used) ? i : -1).filter(i => i >= 0);
-    if (!idx.length || s.caffeine < 1 || U.passes >= 2) return;
-    s.caffeine -= 1; U.passes += 1;
-    idx.forEach(i => { U.dice[i] = { v: rollDie(Math.random), gold: U.dice[i].gold, mark: false }; });
-    U.justRolled = true;
-    clog(`☕ reroll (${idx.length} dice).`);
-    rerender();
-  });
   const hm = $('#hypeMinus'), hp = $('#hypePlus');
   if (hm) hm.addEventListener('click', () => { U.hypeSpend = Math.max(0, U.hypeSpend - 1); rerender(); });
   if (hp) hp.addEventListener('click', () => { U.hypeSpend = Math.min(2, Math.floor(s.hype / 2), U.hypeSpend + 1); rerender(); });
@@ -426,12 +406,8 @@ function openFlyer(s) {
 }
 function actOnDie(i) {
   if (U.phase !== 'play' || !U.dice[i] || U.dice[i].used) return;
-  if (U.clickMode === 'stage') {
-    if (U.stage.includes(i)) U.stage = U.stage.filter(x => x !== i);
-    else if (U.stage.length < 2) { U.stage.push(i); U.dice[i].mark = false; }
-  } else {
-    if (!U.stage.includes(i)) U.dice[i].mark = !U.dice[i].mark;
-  }
+  if (U.stage.includes(i)) U.stage = U.stage.filter(x => x !== i);
+  else if (U.stage.length < 2) U.stage.push(i);
   renderGame();
 }
 function doRoll() {
@@ -499,8 +475,6 @@ document.addEventListener('keydown', e => {
   if (!U || !$('#app')) return;
   if (/INPUT|TEXTAREA/.test((document.activeElement || {}).tagName || '')) return;
   if (e.key >= '1' && e.key <= '9') { const i = +e.key - 1; if (U.dice[i]) actOnDie(i); }
-  else if (e.key === 's' || e.key === 'S') { U.clickMode = 'stage'; renderGame(); }
-  else if (e.key === 'k' || e.key === 'K') { U.clickMode = 'reroll'; renderGame(); }
 });
 function openHelp() {
   if (document.getElementById('helpOverlay')) return;
@@ -513,15 +487,15 @@ function openHelp() {
     <ol class="steps">
       ${step('01', 'Hit the road', 'Road die on weeks 4, 7, 10 (Grind: from week 2). Breakdowns eat van and cash — the highway takes its cut first.')}
       ${step('02', 'Book the gig', 'Pick 1 of 2 offers and pay entry. Bigger rooms pay fame but demand hotter shows. Fame unlocks tiers: T2 at 12, T3 at 26, Main Stage pool at 45+ (week 10+).')}
-      ${step('03', 'Soundcheck', 'Roll 5 dice (+1 gold with a Manager). Spend Caffeine to reroll: 1 token rerolls any dice, max 2 passes per week.')}
+      ${step('03', 'Soundcheck', 'Roll 5 dice (+1 gold with a Manager). No rerolls — stage what you roll.')}
       ${step('04', 'Play the show', 'Stage any 2 dice; optionally spend Hype (2 hype = +1 show, max +2). Show = dice + skill + albums + tech + hype-spend. Beat the Difficulty to win full cash + fame, with fans = venue bonus + margin. Fail, and it is half cash, +1 fan, −1 morale.')}
       ${step('05', 'Work the room', 'Each leftover die becomes merch cash (min(die, stock) shirts × $2), flyer fans (4+ gains fans, 5+ gains hype), or day-job dollars (a 6 repairs the van). A pair in the leftovers writes a song — 4 songs make an album: +5 fame, +10 fans, +1 show hype forever.')}
       ${step('06', 'Flyer & load out', 'Recap the night on a show flyer, check the morale / van / cash warnings, and roll to the next city.')}
     </ol>
     <h3 class="hgroup">When it goes wrong</h3>
-    <p class="fine">Morale at 0 forces a rest week (+$5, +3 morale, +1 caffeine). Van at 0 forces a shop week (−$4, van +3). Any other time: the mechanic costs $4 for van +2, and restocking shirts costs $1 per 2.</p>
+    <p class="fine">Morale at 0 forces a rest week (+$5, +3 morale). Van at 0 forces a shop week (−$4, van +3). Any other time: the mechanic costs $4 for van +2, and restocking shirts costs $1 per 2.</p>
     <h3 class="hgroup">Winning</h3>
-    <p class="fine"><b>Final score</b> = Fans + Fame + floor(Cash ÷ 5) + Albums × 10. In versus, the higher show headlines (+3 fans +$2, opener +1 fame). Keyboard: 1–7 work the dice, S is stage mode, K is reroll mode.</p>
+    <p class="fine"><b>Final score</b> = Fans + Fame + floor(Cash ÷ 5) + Albums × 10. In versus, the higher show headlines (+3 fans +$2, opener +1 fame). Keyboard: number keys stage or unstage dice.</p>
     <p><button class="primary" id="helpClose">Back to the show →</button></p></div>`;
   document.body.appendChild(ov);
   const close = () => ov.remove();

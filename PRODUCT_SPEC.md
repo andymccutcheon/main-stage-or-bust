@@ -5,10 +5,10 @@
 2. **Web game (static, offline-capable):** `app/` playable in any modern browser by opening `index.html` or `npm start`. Modes: Solo / Coop (shared hot-seat) / Versus (2 humans hot-seat) / Solo vs computer. Punk-zine aesthetic, keyboard + mouse + touch, screen-reader labels on all controls.
 
 ## B. Shared rules engine (`app/engine.js`, also used by sims/tests)
-Pure logic, no DOM: state creation, offer generation (seedable RNG), dice rolling, rerolls, song detection, show resolution, work-dice resolution, road events, crew purchases, restock/repair, morale/van fail states, weekly headliner comparison, rival AI turns, final scoring + ranks. Deterministic given an RNG function. Digital UI and print rules MUST match engine behavior; any divergence is a P0 bug.
+Pure logic, no DOM: state creation, offer generation (seedable RNG), dice rolling, song detection, show resolution, work-dice resolution, road events, crew purchases, restock/repair, morale/van fail states, weekly headliner comparison, rival AI turns, final scoring + ranks. Deterministic given an RNG function. Digital UI and print rules MUST match engine behavior; any divergence is a P0 bug.
 
 ## C. Functional requirements
-- Setup: band name(s), mode, difficulty (Basement=generous: +$5 start, D-0; Club=standard; Grind: -$5 start, road events also on week 2, no mercy caffeine).
+- Setup: band name(s), mode, difficulty (Basement=generous: +$5 start, D-0; Club=standard; Grind: -$5 start, road events also on week 2).
 - Season: exactly 12 weeks + optional main-stage encore note; forced-rest handling; week log; end-of-season score + rank + tour diary export (copyable text).
 - Purchases anytime cash/fame allow (Roadie $25 / Tech $30 / Manager $20+$3/wk); restock/repair anytime; hype spend at show time.
 - Versus: shared weekly offers; headliner bonus; separate sheets; final compare.

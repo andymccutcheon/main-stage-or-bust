@@ -49,7 +49,6 @@
   <div class="track"><span class="lbl">Morale (start 5 · fail −1 · 0 = rest next week)</span><br><span class="boxes" id="morale"></span></div>
   <div class="track"><span class="lbl">Van (start 6 · 0 = shop week)</span><br><span class="boxes" id="van"></span></div>
   <div class="track"><span class="lbl">Merch stock (start 6 · max 12 · restock $1/2 shirts)</span><br><span class="boxes" id="merch"></span></div>
-  <div class="track"><span class="lbl">Caffeine (start 2 · max 5 · 1 = reroll pass, 2/wk max)</span><br><span class="boxes" id="caff"></span></div>
 </div>
 <div>
   <h2>Engine</h2>
@@ -59,7 +58,7 @@
   <div class="track"><span class="lbl">Crew</span><br>
   ☐ Roadie $30 (+2 free merch/show, van +1/wk) &nbsp; ☐ Guitar tech $35 (+1 show) &nbsp; ☐ Manager $25 + $3/wk (gold die)</div>
   <div class="track"><span class="lbl">Week</span><br><span class="boxes" id="weeks"></span></div>
-  <p class="note">Show hype = 2 stage dice + skill + albums + tech + hype-spend. Win ties go to the band. Fail: half cash, +1 fan, −1 morale. Coffee House always +1(caf). Anthem (4-of-a-kind on kept dice): +5 fans +3 fame, 1/wk.</p>
+  <p class="note">Show hype = 2 stage dice + skill + albums + tech + hype-spend. Win ties go to the band. Fail: half cash, +1 fan, −1 morale. Coffee House always +1 hype. Anthem (4-of-a-kind on kept dice): +5 fans +3 fame, 1/wk.</p>
 </div>
 </div>
 <h2>Tour log</h2>
@@ -78,12 +77,12 @@
 <tr><td>11</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td>12</td><td class="venue"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </table>
-<p class="note">★ = road die weeks (1d6: 1 breakdown −2 van or pay $8 · 2 storm −2 hype · 3 +3 fans · 4 +$6 · 5 +2 fame · 6 +1(caf) +1 morale). Final score = Fans + Fame + ⌊Cash/5⌋ + Albums×10. Ranks: &lt;80 Basement Tapes · 80–119 Local Opener · 120–159 Club Kings · 160–199 Road Dogs · 200–239 Main Stage Bound · 240+ Headliner.</p>
+<p class="note">★ = road die weeks (1d6: 1 breakdown −2 van or pay $8 · 2 storm −2 hype · 3 +3 fans · 4 +$6 · 5 +2 fame · 6 +$3 +1 morale). Final score = Fans + Fame + ⌊Cash/5⌋ + Albums×10. Ranks: &lt;80 Basement Tapes · 80–119 Local Opener · 120–159 Club Kings · 160–199 Road Dogs · 200–239 Main Stage Bound · 240+ Headliner.</p>
 <script>
 (function(){
   function boxes(id,n,gates){var el=document.getElementById(id),h='';for(var i=0;i<n;i++){h+='<span'+((gates||[]).indexOf(i)>=0?' class="gate"':'')+'>'+(i+1)+'</span>';}el.innerHTML=h;}
   boxes('fame',60,[11,25,44]); boxes('hype',10); boxes('morale',5); boxes('van',6);
-  boxes('merch',12); boxes('caff',5); boxes('stars',12); boxes('s1',4); boxes('s2',4); boxes('weeks',12);
+  boxes('merch',12); boxes('stars',12); boxes('s1',4); boxes('s2',4); boxes('weeks',12);
 })();
 </script>
 </body>
