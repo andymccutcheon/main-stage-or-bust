@@ -29,7 +29,7 @@ You need: 5 white d6 + 1 gold d6 (Manager only), a pencil. Black-and-white frien
 ## The week (both versions, same rules)
 1. Road die (weeks 4/7/10) · 2. Pick 1 of 2 gig offers · 3. Roll (no rerolls — play what you roll)
 4. Stage 2 dice (+Hype, max +2) vs venue Difficulty · 5. Work 3 leftover dice (merch/flyer/day job)
-6. Pairs in leftovers write songs (4 = album) · 7. Payouts. Final = Fans + Fame + ⌊Cash/5⌋ + Albums×10.
+6. Pairs in leftovers write songs (4 = album) · 7. Payouts. Final = Fans + Fame.
 
 ## Project map
 | File | What |

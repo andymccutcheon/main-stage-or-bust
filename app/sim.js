@@ -72,7 +72,7 @@ function main() {
   const gates = {
     finaleReach_15_40: finale / N >= 0.15 && finale / N <= 0.40,
     bankrupt_lt15: bankrupt / N < 0.15,
-    mean_150_230: mean >= 150 && mean <= 230,
+    mean_110_180: mean >= 110 && mean <= 180,
   };
   console.log('GATES ' + JSON.stringify(gates));
   const fail = Object.values(gates).some(v => !v);

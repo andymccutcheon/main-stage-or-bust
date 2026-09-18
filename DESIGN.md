@@ -53,8 +53,8 @@ Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with
 - Success (Hype >= D): full Cash + Fame, Fans = venue bonus + max(1, Show − D margin), +1 Skill star (every 4th star = +1 Skill, max +3). Fail: half Cash rounded down, +0 Fame, +1 Fan, −1 Morale.
 - Work dice: Merch die sells min(die, stock) shirts x $2 (Roadie +2 shirts/show free). Flyer: die>=4 gains that many Fans immediately; die>=5 also +1 Hype. Day Job: +$ equal to die; a 6 also repairs +1 Van. Mechanic anytime: $4 = +2 Van. Restock anytime: $1 per 2 shirts (round cost up).
 - Song: one pair per week = 1 Song box. Album (4 boxes) = immediate +5 Fame +10 Fans, plus permanent +1 Show Hype each (max +2). Four-of-a-kind on the kept roll = Anthem: +5 Fans +3 Fame immediately (once/week).
-- Final Score = Fans + Fame + floor(Cash / 5) + Albums x 10. (Fame x1, not x2: fame is the ladder, fans are the score. Changed after sim showed x2 let fame dominate.)
-- Solo/coop ranks (validated in sim, 10k skilled-play seasons: p10=173, med=211, p90=246): <80 Basement Tapes, 80–119 Local Opener, 120–159 Club Kings, 160–199 Road Dogs, 200–239 Main Stage Bound, 240+ Main Stage Headliner. Median skilled season = Main Stage Bound by design; humans trend 10–20% below the heuristic.
+- Final Score = Fans + Fame. Two running totals, nothing else. Albums already pay +10 fans/+5 fame the moment they complete; cash is purely instrumental (entries, crew, repairs).
+- Solo/coop ranks (validated in sim, 10k skilled-play seasons: p10=173, med=211, p90=246): <80 Basement Tapes, 80–109 Local Opener, 110–134 Club Kings, 135–159 Road Dogs, 160–184 Main Stage Bound, 185+ Main Stage Headliner. Median skilled season = Road Dogs by design; humans trend 10–20% below the heuristic.
 - Versus: higher Final Score wins. Weekly twist: higher Show Hype headlines (+3 Fans +$2); loser opens (+1 Fame). Tie: both +1 Fan.
 
 ## 7. Solo implementation

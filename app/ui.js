@@ -147,7 +147,7 @@ function statHtml(s, active) {
     <b>${esc(s.name)}</b> <small class="dim" tabindex="0" data-tip="Tiers gate your offers: clubs at 12 fame, big rooms at 26, Main Stage pool at 45+. Skill grows every 4th win (+1 show hype, max +3). Each finished album adds +1 show hype.">tier ${tierOf(s.fame)} · skill +${s.skill} · albums +${s.albums}</small>
     <div class="stats">
       ${tip('Cash', '$' + s.cash, 'Gas, entries, crew. Earn it at gigs, merch tables, day jobs. Broke is not game over — but everything gets harder.')}
-      ${tip('Fans', s.fans, 'THE SCORE, mostly. Final = Fans + Fame + Cash÷5 + Albums×10. Win shows, flyer neighborhoods, finish albums.', true)}
+      ${tip('Fans', s.fans, 'THE SCORE, mostly. Final = Fans + Fame, nothing else. Win shows, flyer neighborhoods, finish albums.', true)}
       ${tip('Fame', s.fame, 'Unlocks bigger rooms: clubs at 12, big rooms at 26, Main Stage pool at 45+. Win shows and land press to climb.')}
       ${tip('Hype', s.hype, 'Banked energy. Spend 2 for +1 on any show (max +2). Earn it flyering with 5+ and surviving ugly weeks.')}
       ${tip('Morale', '♥'.repeat(s.morale) + '♡'.repeat(CAPS.morale - s.morale), 'Band spirit. Failed shows cost 1. At 0, next week is forced rest: +$5, +3 morale.')}
@@ -457,8 +457,8 @@ function endSeason() {
     rivalHtml = `<div class="panel"><h3>Vs The Stagedivers</h3><p>You ${mine} — Them ${theirs}. <b>${mine >= theirs ? 'YOU HEADLINE. They open. Forever.' : 'They headline. Rematch?'}</b></p></div>`;
   }
   app.innerHTML = `<h2>Season over — 12 weeks, countless miles</h2>${verdict}${rivalHtml}
-  <table class="score"><tr><th>Band</th><th>Fans</th><th>Fame</th><th>Cash/5</th><th>Albums×10</th><th>Total</th><th>Rank</th></tr>
-  ${rows.map(({ s, sc, rank }) => `<tr><td>${esc(s.name)}</td><td>${s.fans}</td><td>${s.fame}</td><td>${Math.floor(s.cash / 5)}</td><td>${s.albums * 10}</td><td><b>${sc}</b></td><td>${esc(rank)}</td></tr>`).join('')}</table>
+  <table class="score"><tr><th>Band</th><th>Fans</th><th>Fame</th><th>Total</th><th>Rank</th></tr>
+  ${rows.map(({ s, sc, rank }) => `<tr><td>${esc(s.name)}</td><td>${s.fans}</td><td>${s.fame}</td><td><b>${sc}</b></td><td>${esc(rank)}</td></tr>`).join('')}</table>
   <h3>Tour diary</h3><div class="log" style="max-height:none">${U.log.map(l => `<div>${l.w ? `<span class="wk">W${l.w}</span> ` : ''}${l.msg}</div>`).join('')}</div>
   <p><button class="primary" id="copyBtn">Copy diary</button> <button id="againBtn">New season</button></p>`;
   $('#copyBtn').addEventListener('click', async () => {
@@ -495,7 +495,7 @@ function openHelp() {
     <h3 class="hgroup">When it goes wrong</h3>
     <p class="fine">Morale at 0 forces a rest week (+$5, +3 morale). Van at 0 forces a shop week (−$4, van +3). Any other time: the mechanic costs $4 for van +2, and restocking shirts costs $1 per 2.</p>
     <h3 class="hgroup">Winning</h3>
-    <p class="fine"><b>Final score</b> = Fans + Fame + floor(Cash ÷ 5) + Albums × 10. In versus, the higher show headlines (+3 fans +$2, opener +1 fame). Keyboard: number keys stage or unstage dice.</p>
+    <p class="fine"><b>Final score</b> = Fans + Fame. That is the whole formula. In versus, the higher show headlines (+3 fans +$2, opener +1 fame). Keyboard: number keys stage or unstage dice.</p>
     <p><button class="primary" id="helpClose">Back to the show →</button></p></div>`;
   document.body.appendChild(ov);
   const close = () => ov.remove();

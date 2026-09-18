@@ -16,8 +16,8 @@ const VENUE_BY_ID = Object.fromEntries(VENUES.map(v => [v.id, v]));
 const CAPS = { hype: 10, morale: 5, van: 6, merch: 12, skill: 3 };
 const COSTS = { roadie: 30, tech: 35, managerHire: 25, managerWage: 3, mechanic: 4 };
 const RANKS = [
-  [240, 'Main Stage Headliner'], [200, 'Main Stage Bound'], [160, 'Road Dogs'],
-  [120, 'Club Kings'], [80, 'Local Opener'], [-Infinity, 'Basement Tapes'],
+  [185, 'Main Stage Headliner'], [160, 'Main Stage Bound'], [135, 'Road Dogs'],
+  [110, 'Club Kings'], [80, 'Local Opener'], [-Infinity, 'Basement Tapes'],
 ];
 const ROAD_WEEKS = [4, 7, 10];
 const SEASON_WEEKS = 12;
@@ -250,7 +250,9 @@ function mechanic(side) {
 }
 
 function finalScore(side) {
-  return side.fans + side.fame + Math.floor(side.cash / 5) + side.albums * 10;
+  // Beginners' scoring: your two running totals, nothing else. Albums already
+  // pay +10 fans/+5 fame the moment they complete; cash is purely instrumental.
+  return side.fans + side.fame;
 }
 function rankFor(score) {
   for (const [min, name] of RANKS) if (score >= min) return name;

@@ -158,7 +158,7 @@ test('offers gate tiers and main stage', () => {
 
 test('final score and ranks', () => {
   const s = E.createSide('s'); s.fans = 100; s.fame = 30; s.cash = 23; s.albums = 1;
-  assert.equal(E.finalScore(s), 100 + 30 + 4 + 10);
+  assert.equal(E.finalScore(s), 130);
   assert.equal(E.rankFor(250), 'Main Stage Headliner');
   assert.equal(E.rankFor(10), 'Basement Tapes');
 });
