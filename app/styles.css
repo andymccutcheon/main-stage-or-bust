@@ -62,9 +62,12 @@ legend{font-weight:700;text-transform:uppercase;font-size:12px;letter-spacing:1.
 .panel.solo{border-left:6px solid var(--accent)}
 
 /* Stats as tappable tiles with CSS-only teaching tooltips */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin:16px 0 6px}
-.stat{position:relative;background:rgba(255,255,255,.025);border:1px solid var(--hair);border-radius:10px;padding:10px 12px 9px;color:var(--dim);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:help}
-.stat b{display:block;color:var(--ink);font-family:var(--font-display);font-weight:400;font-size:27px;letter-spacing:.5px;margin-top:1px;line-height:1.1}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin:18px 0 8px}
+.stat{position:relative;background:rgba(255,255,255,.025);border:1px solid var(--hair);border-radius:10px;padding:14px 16px 12px;color:var(--dim);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;cursor:help}
+.stat b{display:block;color:var(--ink);font-family:var(--font-display);font-weight:400;font-size:29px;letter-spacing:.5px;margin-top:3px;line-height:1.1}
+.crewline{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:14px;line-height:1.8}
+.crewmate{white-space:nowrap}
+.crewdot{color:#4a4741}
 .stat.hot{border-color:var(--accent)}
 .stat.hot b{color:var(--accent)}
 [data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:230px;max-width:62vw;background:var(--ink);color:#161310;font-size:13px;font-weight:400;line-height:1.55;letter-spacing:0;text-transform:none;padding:11px 14px;border-radius:8px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.5);pointer-events:none;white-space:normal}
@@ -113,7 +116,7 @@ table.score td,table.score th{padding:12px 10px;text-align:left;border:none;bord
 table.score th{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);border-bottom:2px solid #4a4741}
 .rank{font-family:var(--font-display);font-size:clamp(36px,6vw,56px);text-transform:uppercase;color:var(--accent);line-height:1.1;margin:12px 0}
 .notice{border:1px solid var(--accent);border-radius:12px;padding:14px 18px;margin:16px 0;background:#221007}
-.songs{letter-spacing:3px;font-size:20px;margin-top:10px}
+.songs{letter-spacing:3px;font-size:20px;margin-top:14px}
 a{color:var(--sticker)}
 footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(--hair);padding-top:20px}
 

@@ -156,7 +156,7 @@ function statHtml(s, active) {
       ${tip('Caff', s.caffeine, 'Rerolls. 1 token rerolls any dice, max 2 passes per show week. Coffee Houses and smooth miles top it up.')}
     </div>
     <div class="songs" tabindex="0" data-tip="Pairs in leftover dice write songs (1 per week). 4 songs = an album: +5 fame, +10 fans, +1 show hype forever.">${songs}</div>
-    <small class="dim" tabindex="0" data-tip="Hired help. Roadie: +2 free merch sales per show, van +1 weekly. Guitar tech: +1 show hype. Manager: gold die for $3/week.">crew: ${['roadie', 'tech', 'manager'].map(c => s.crew[c] ? `✅${c}` : `⬜${c}`).join(' ')}</small>
+    <small class="dim crewline" tabindex="0" data-tip="Hired help. Roadie: +2 free merch sales per show, van +1 weekly. Guitar tech: +1 show hype. Manager: gold die for $3/week."><span>crew:</span>${['roadie', 'tech', 'manager'].map(c => `<span class="crewmate">${s.crew[c] ? '✅' : '⬜'} ${c}</span>`).join('<span class="crewdot" aria-hidden="true">·</span>')}</small>
   </div>`;
 }
 function shopHtml(s) {
