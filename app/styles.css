@@ -134,7 +134,7 @@ footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(
 .flyer-state{margin:8px 0;padding-left:20px;font-size:14px;line-height:1.6}
 .flyer .shoprow{margin-top:14px}
 .flyer .shoprow button{background:#141414;color:var(--sticker);border-color:#141414}
-@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}
 
 /* Help modal: editorial rhythm — numbered grid, grouped sections, air */
 .help-card{background:var(--surface);border:1px solid #4a4741;border-radius:12px;max-width:640px;width:100%;padding:38px 40px;max-height:88vh;overflow:auto}
@@ -165,3 +165,39 @@ footer{margin-top:56px;color:var(--dim);font-size:13px;border-top:1px solid var(
 
 /* Hero tagline on the setup wizard */
 .hero-tag{font-size:20px;line-height:1.55;max-width:58ch;margin:26px 0 18px;color:var(--ink)}
+
+/* Soundcheck: segmented control, kbd hints, stage readout, work rows */
+.seg{display:inline-flex;border:1px solid #4a4741;border-radius:8px;overflow:hidden;margin:4px 0}
+.segbtn{border:none;border-radius:0;background:transparent;box-shadow:none;color:var(--dim);padding:9px 20px}
+.segbtn:hover:not(:disabled){color:var(--ink)}
+.segbtn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.segbtn[aria-pressed="true"]:hover{color:var(--accent-ink)}
+.mode-hint{color:var(--dim);margin:10px 0 0}
+.keys{color:var(--dim);font-size:13px}
+kbd{display:inline-block;border:1px solid #4a4741;border-bottom-width:2px;border-radius:4px;padding:0 7px;font:12px/1.7 ui-monospace,Menlo,Consolas,monospace;background:#101010;color:var(--ink)}
+.stage-grid{display:grid;grid-template-columns:auto auto 1fr;gap:8px 24px;align-items:center;margin-top:16px}
+.slot{display:flex;flex-direction:column;gap:8px;align-items:center}
+.slot-tag{font:10px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:2px;color:var(--dim)}
+.show-math{font-size:15px;line-height:2}
+.hype-ctl b{font-size:19px}
+.readout{display:flex;align-items:center;gap:14px;margin:18px 0 4px;font-size:15px}
+.readout b{font-family:var(--font-display);font-weight:400;font-size:36px;letter-spacing:1px;line-height:1}
+.verdict{font-weight:800;font-size:13px;letter-spacing:2px;border:2px solid;padding:3px 12px;border-radius:6px}
+.verdict.win{color:var(--ok);border-color:var(--ok)}
+.verdict.fail{color:var(--bad);border-color:var(--bad)}
+.workrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.workdie{font-family:var(--font-display);font-size:21px;min-width:56px}
+.shopgroup{margin-top:18px}
+.shopgroup h4{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin:0 0 8px}
+/* Dice: tactile hover + staggered roll-in (transform/opacity only) */
+.die{transition:transform .16s cubic-bezier(.2,.7,.3,1.25),background-color .15s ease}
+.die:hover:not(:disabled){transform:translateY(-2px)}
+@keyframes diein{from{opacity:0;transform:translateY(12px) scale(.92)}}
+.dice.roll-in .die{animation:diein .3s cubic-bezier(.2,.7,.3,1.2) backwards}
+.dice.roll-in .die:nth-child(2){animation-delay:.04s}
+.dice.roll-in .die:nth-child(3){animation-delay:.08s}
+.dice.roll-in .die:nth-child(4){animation-delay:.12s}
+.dice.roll-in .die:nth-child(5){animation-delay:.16s}
+.dice.roll-in .die:nth-child(6){animation-delay:.2s}
+.dice.roll-in .die:nth-child(7){animation-delay:.24s}
+@media(max-width:640px){.stage-grid{grid-template-columns:auto auto}.show-math{grid-column:1/-1}}

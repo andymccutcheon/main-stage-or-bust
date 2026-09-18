@@ -160,14 +160,19 @@ function statHtml(s, active) {
   </div>`;
 }
 function shopHtml(s) {
-  const b = (id, label, dis) => `<button data-shop="${id}"${dis ? ' disabled' : ''}>${label}</button>`;
-  return `<div class="panel"><h3>Backstage deals</h3><div class="shoprow">
-    ${b('roadie', `Roadie $30${s.crew.roadie ? ' ✓' : ''}`, s.crew.roadie || s.cash < COSTS.roadie)}
-    ${b('tech', `Guitar tech $35${s.crew.tech ? ' ✓' : ''}`, s.crew.tech || s.cash < COSTS.tech)}
-    ${b('manager', `Manager $25 + $3/wk${s.crew.manager ? ' ✓' : ''}`, s.crew.manager || s.cash < COSTS.managerHire)}
-    ${b('restock2', `Press +2 shirts $1`, s.merch >= CAPS.merch || s.cash < 1)}
-    ${b('mechanic', `Mechanic: van +2 $4`, s.van >= CAPS.van || s.cash < COSTS.mechanic)}
-  </div><small class="dim">Roadie: +2 free merch sales/show, van +1/wk · Tech: +1 show hype · Manager: gold die, $3/wk wage.</small></div>`;
+  const b = (id, label, dis, title) => `<button data-shop="${id}"${dis ? ' disabled' : ''}${title ? ` title="${title}"` : ''}>${label}</button>`;
+  const need = (n) => `Need $${n} — have $${s.cash}`;
+  return `<div class="panel"><h3>Backstage deals</h3>
+  <div class="shopgroup"><h4>Crew · one-time hires</h4><div class="shoprow">
+    ${b('roadie', `Roadie $30${s.crew.roadie ? ' ✓' : ''}`, s.crew.roadie || s.cash < COSTS.roadie, s.crew.roadie ? 'On the payroll' : s.cash < COSTS.roadie ? need(30) : '+2 free merch sales per show, van +1 every week')}
+    ${b('tech', `Guitar tech $35${s.crew.tech ? ' ✓' : ''}`, s.crew.tech || s.cash < COSTS.tech, s.crew.tech ? 'On the payroll' : s.cash < COSTS.tech ? need(35) : '+1 show hype, every show, forever')}
+    ${b('manager', `Manager $25 + $3/wk${s.crew.manager ? ' ✓' : ''}`, s.crew.manager || s.cash < COSTS.managerHire, s.crew.manager ? 'On the payroll' : s.cash < COSTS.managerHire ? need(25) : 'An extra gold die every soundcheck')}
+  </div></div>
+  <div class="shopgroup"><h4>Van &amp; merch · anytime</h4><div class="shoprow">
+    ${b('restock2', `Press +2 shirts $1`, s.merch >= CAPS.merch || s.cash < 1, s.merch >= CAPS.merch ? 'Racks are full' : s.cash < 1 ? 'Need $1' : 'Restock the merch table')}
+    ${b('mechanic', `Mechanic: van +2 $4`, s.van >= CAPS.van || s.cash < COSTS.mechanic, s.van >= CAPS.van ? 'Van is cherry' : s.cash < COSTS.mechanic ? need(4) : 'Patch the van before it strands you')}
+  </div></div>
+  <small class="dim">Roadie: +2 free merch sales/show, van +1/wk · Tech: +1 show hype · Manager: gold die, $3/wk wage.</small></div>`;
 }
 function stepperHtml() {
   const roadWeek = U.game.grindRoad.includes(U.game.week);
@@ -242,30 +247,37 @@ function diceHtml(s) {
   const proj = U.dice.length && staged.length === 2 ? sum + bonus + U.hypeSpend : null;
   let html = `<div class="panel"><h3>🎲 ${U.phase === 'done' ? 'Show played' : 'Soundcheck'} ${U.passes ? `<small class="dim">(rerolls used ${U.passes}/2)</small>` : ''}</h3>`;
   if (U.phase === 'play') {
-    html += `<div role="group" aria-label="click mode">
-      <button class="ghost" data-mode="stage"${U.clickMode === 'stage' ? ' disabled' : ''}>Click = put on stage</button>
-      <button class="ghost" data-mode="reroll"${U.clickMode === 'reroll' ? ' disabled' : ''}>Click = mark reroll</button></div>`;
+    html += `<div class="seg" role="group" aria-label="What clicking dice does">
+      <button class="segbtn" data-mode="stage" aria-pressed="${U.clickMode === 'stage'}">Stage</button>
+      <button class="segbtn" data-mode="reroll" aria-pressed="${U.clickMode === 'reroll'}">Reroll</button></div>
+    <p class="mode-hint">${U.clickMode === 'stage' ? 'Click dice to put them <b>on stage</b> (need 2).' : 'Click dice to <b>mark them</b>, then reroll — 1☕ per pass, 2 passes max.'}</p>`;
   }
-  html += `<div class="dice">` + U.dice.map((d, i) => {
+  html += `<div class="dice${U.justRolled ? ' roll-in' : ''}">` + U.dice.map((d, i) => {
     if (d.used) return `<button class="die slot" disabled title="used">${d.v}</button>`;
     if (staged.includes(i)) return `<button class="die" data-die="${i}" aria-pressed="true" title="on stage — click to remove">★${d.v}</button>`;
     if (U.phase !== 'play') return `<button class="die${d.gold ? ' gold' : ''}" disabled>${d.v}</button>`;
     const marked = !!d.mark;
-    return `<button class="die${d.gold ? ' gold' : ''}" data-die="${i}" aria-pressed="${marked}" title="die ${d.v}${d.gold ? ' (gold)' : ''}">${d.v}</button>`;
+    return `<button class="die${d.gold ? ' gold' : ''}" data-die="${i}" aria-pressed="${marked}" title="die ${d.v}${d.gold ? ' (gold)' : ''} — click: ${U.clickMode}">${d.v}</button>`;
   }).join('') + `</div>`;
   if (U.phase === 'play') {
     const marked = U.dice.filter(d => d.mark && !d.used && !U.stage.includes(U.dice.indexOf(d))).length;
+    const rrWhy = !U.diceRolled ? 'Roll first' : U.passes >= 2 ? 'No passes left (2 per show max)' : s.caffeine < 1 ? 'No caffeine — play a Coffee House or catch a smooth road day' : marked === 0 ? 'Mark dice first (Reroll mode, or K key)' : `Reroll ${marked} marked dice`;
     html += `<div class="shoprow">
-      <button id="rollBtn"${U.diceRolled ? ' disabled' : ''}>${U.diceRolled ? 'Rolled' : 'Roll ' + diceCount(s) + ' dice'}</button>
-      <button id="rerollBtn"${!U.diceRolled || marked === 0 || s.caffeine < 1 || U.passes >= 2 ? ' disabled' : ''}>Reroll ${marked} (1☕, ${U.passes}/2)</button>
-    </div><small class="dim">Keys 1–${U.dice.length} act on dice · S = stage mode · K = reroll mode.</small>`;
-    html += `<h3>On stage (need 2)</h3><div class="slots">` +
-      [0, 1].map(k => `<button class="die slot" disabled>${staged[k] !== undefined ? U.dice[staged[k]].v : '–'}</button>`).join('') +
-      `<span>+ skill/albums/tech ${bonus} + hype <button class="ghost" id="hypeMinus" aria-label="less hype">−</button> ${U.hypeSpend} <button class="ghost" id="hypePlus" aria-label="more hype">+</button> (2 hype each)</span></div>`;
-    if (proj !== null) html += `<p>Projected show: <b>${proj}</b> vs D${v.D + (U.game.coopBump || 0)} ${proj >= v.D + (U.game.coopBump || 0) ? '✅' : '❌'}</p>`;
-    html += `<p><button class="primary" id="playBtn"${staged.length === 2 ? '' : ' disabled'}>Play the show →</button></p>`;
+      <button id="rollBtn"${U.diceRolled ? ' disabled' : ' class="primary"'}>${U.diceRolled ? 'Rolled' : 'Roll ' + diceCount(s) + ' dice'}</button>
+      <button id="rerollBtn"${!U.diceRolled || marked === 0 || s.caffeine < 1 || U.passes >= 2 ? ' disabled' : ''} title="${rrWhy}">Reroll (${marked}) · 1☕</button>
+      <span class="dim">passes ${U.passes}/2 · ☕ ${s.caffeine}</span>
+    </div><p class="keys"><kbd>1</kbd>–<kbd>${Math.max(U.dice.length, 1)}</kbd> act on dice · <kbd>S</kbd> stage · <kbd>K</kbd> reroll</p>`;
+    if (!U.diceRolled) html += `<p class="dim">The kit is packed. Roll when ready.</p>`;
+    const D = v.D + (U.game.coopBump || 0);
+    html += `<h3>On stage</h3><div class="stage-grid">` +
+      [0, 1].map(k => `<span class="slot"><span class="slot-tag">SLOT 0${k + 1}</span><button class="die slot" disabled>${staged[k] !== undefined ? U.dice[staged[k]].v : '–'}</button></span>`).join('') +
+      `<span class="show-math">+ crew &amp; craft ${bonus >= 0 ? '+' : ''}${bonus} <span class="dim">(skill, albums, tech)</span><br><span class="hype-ctl">hype <button class="ghost" id="hypeMinus" aria-label="less hype">−</button> <b>${U.hypeSpend}</b> <button class="ghost" id="hypePlus" aria-label="more hype">+</button></span> <span class="dim">2 hype each</span></span></div>`;
+    if (proj !== null) html += `<p class="readout">SHOW <b>${proj}</b> <span class="dim">vs DIF ${String(D).padStart(2, '0')}</span> <span class="verdict ${proj >= D ? 'win' : 'fail'}">${proj >= D ? 'WIN' : 'SHORT'}</span></p>`;
+    else html += `<p class="dim">Stage 2 dice to lock the verdict.</p>`;
+    html += `<p><button class="primary" id="playBtn"${staged.length === 2 ? '' : ' disabled'}${staged.length === 2 ? '' : ' title="Stage 2 dice first"'}>Play the show →</button></p>`;
   }
   html += `</div>`;
+  U.justRolled = false;
   return html;
 }
 function workHtml(s) {
@@ -276,10 +288,16 @@ function workHtml(s) {
     const pairVal = vals.find((x, i) => vals.indexOf(x) !== i);
     html += `<p><button id="songBtn">✍️ Write song (pair of ${pairVal}) — ${s.songs + 1}/8</button></p>`;
   }
-  html += leftovers.map(({ d, i }) => `<p>Die ${d.v}:
-    <button data-work="${i}|merch"${s.merch <= 0 && !s.crew.roadie ? ' disabled' : ''}>Merch (+$)</button>
-    <button data-work="${i}|flyer">Flyer (fans)</button>
-    <button data-work="${i}|job">Day job ($)</button></p>`).join('');
+  html += leftovers.map(({ d, i }) => {
+    const noStock = s.merch <= 0 && !s.crew.roadie;
+    const merchPay = (Math.min(d.v, s.merch) + (s.crew.roadie ? 2 : 0)) * 2;
+    const flyFans = d.v >= 4 ? d.v : 0, flyHype = d.v >= 5 ? ' +hype' : '';
+    const jobVan = d.v === 6 ? ' +van' : '';
+    return `<p class="workrow"><span class="workdie">Die ${d.v}</span>
+    <button data-work="${i}|merch"${noStock ? ' disabled' : ''} title="${noStock ? 'No stock — press shirts in Backstage deals' : `Sell shirts for $${merchPay}`}">Merch +$${merchPay}</button>
+    <button data-work="${i}|flyer" title="${flyFans ? `+${flyFans} fans${flyHype} (needs 4+, hype at 5+)` : 'Too quiet — flyers need 4+'}">Flyer +${flyFans}${flyHype}</button>
+    <button data-work="${i}|job" title="Straight cash${jobVan ? ', plus van repair on a 6' : ''}">Job +$${d.v}${jobVan}</button></p>`;
+  }).join('');
   html += `<p><button class="primary" id="flyerBtn"${leftovers.length === 0 ? '' : ' disabled'}>Print the flyer →</button></p></div>`;
   return html;
 }
@@ -319,6 +337,7 @@ function wire(s) {
     if (!idx.length || s.caffeine < 1 || U.passes >= 2) return;
     s.caffeine -= 1; U.passes += 1;
     idx.forEach(i => { U.dice[i] = { v: rollDie(Math.random), gold: U.dice[i].gold, mark: false }; });
+    U.justRolled = true;
     clog(`☕ reroll (${idx.length} dice).`);
     rerender();
   });
@@ -419,7 +438,7 @@ function doRoll() {
   const s = curSide();
   const n = diceCount(s);
   U.dice = rollDice(n, Math.random).map((v, i) => ({ v, gold: !!(s.crew.manager && i === n - 1), mark: false, used: false }));
-  U.diceRolled = true;
+  U.diceRolled = true; U.justRolled = true;
   clog(`🎲 ${esc(s.name)} rolls ${U.dice.map(d => d.v).join(' ')}.`);
   renderGame();
 }

@@ -34,6 +34,7 @@ function selftest() {
       const dice = qa('[data-die]');
       if (dice.length < 5) throw new Error('no dice w' + w);
       dice[0].click(); dice[1].click();
+      if (w >= stopAfter) { document.title = 'SELFTEST:PAUSED wk' + w; return; }
       const pb = q('#playBtn');
       if (!pb || pb.disabled) throw new Error('play blocked w' + w);
       pb.click();
@@ -47,7 +48,6 @@ function selftest() {
       if (!fb || fb.disabled) throw new Error('flyer blocked w' + w);
       fb.click();
       if (!q('#flyerOverlay')) throw new Error('no flyer modal w' + w);
-      if (w >= stopAfter) { document.title = 'SELFTEST:PAUSED wk' + w; return; }
       const ew = q('#endWeekBtn');
       if (!ew) throw new Error('end blocked w' + w);
       ew.click();
