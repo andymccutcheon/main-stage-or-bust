@@ -22,6 +22,7 @@
       verdict, margin,
       vanHp: s.van, albums: s.albums, anthem: false,
       away: (game.mode === 'versus' && (sideIdx || 0) === 1),
+      week: game.week || 1,
     };
   }
   function drawStage(ctx, st, pal, t, opts) {
@@ -78,6 +79,10 @@
       ctx.fillStyle = '#0c0c0c'; ctx.fillRect(20, 120, 50, 90);
       ctx.fillStyle = '#3a3a3e'; ctx.beginPath(); ctx.arc(45, 145, 12, 0, Math.PI * 2); ctx.arc(45, 185, 12, 0, Math.PI * 2); ctx.fill();
     }
+    // week sky cycle: dusk 1-4, night 5-8, finale glow 9-12 (one tint wash)
+    const wk = st.week || 1;
+    ctx.fillStyle = wk <= 4 ? 'rgba(255,122,26,0.10)' : wk <= 8 ? 'rgba(20,20,60,0.14)' : 'rgba(255,210,63,0.10)';
+    ctx.fillRect(0, 0, W, 230);
     // stage floor
     ctx.fillStyle = '#2a2622'; ctx.fillRect(0, 230, W, 60);
     ctx.fillStyle = '#3a352f'; ctx.fillRect(0, 230, W, 6);
@@ -134,6 +139,15 @@
           if (blob) ctx.drawImage(blob, cx, cy + ph, 16, 16);
         } catch (e) {}
       }
+    }
+    // encore spotlight on win, flat room on fail
+    if (st.verdict === 'win') {
+      const g2 = ctx.createLinearGradient(0, 60, 0, 240);
+      g2.addColorStop(0, 'rgba(255,255,240,0.28)'); g2.addColorStop(1, 'rgba(255,255,240,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath(); ctx.moveTo(110, 60); ctx.lineTo(200, 60); ctx.lineTo(260, 240); ctx.lineTo(40, 240); ctx.fill();
+    } else if (st.verdict === 'fail') {
+      ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(0, 0, W, 230);
     }
     // --- marquee verdict stamp ---
     if (st.verdict === 'win' || st.verdict === 'fail') {

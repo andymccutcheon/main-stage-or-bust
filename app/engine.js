@@ -8,6 +8,13 @@ const VENUES = [
   { id: 'record',  name: 'Record Store',        tier: 2, D: 10,  cash: 8,  fame: 5, fansBonus: 3, entry: 2 },
   { id: 'dive',    name: 'Dive Bar',            tier: 2, D: 11,  cash: 10, fame: 5, fansBonus: 4, entry: 2 },
   { id: 'college', name: 'College Radio',       tier: 2, D: 12,  cash: 6,  fame: 6, fansBonus: 4, entry: 2 },
+  { id: 'laundry', name: 'Laundromat',          tier: 1, D: 8,  cash: 5,  fame: 2, fansBonus: 1, entry: 0, blurb: 'Spin cycle acoustics. Captive audience.' },
+  { id: 'pizza',   name: 'Pizza Parlor',          tier: 1, D: 10, cash: 9,  fame: 4, fansBonus: 3, entry: 0, blurb: 'Free slices for the band. Greasy strings.' },
+  { id: 'bowling', name: 'Bowling Alley',         tier: 2, D: 11, cash: 11, fame: 5, fansBonus: 4, entry: 2, blurb: 'League night crowd. Loud between frames.' },
+  { id: 'community', name: 'Community College',  tier: 2, D: 12, cash: 7,  fame: 6, fansBonus: 5, entry: 2, blurb: 'Student union believers + one dean.' },
+  { id: 'drivein', name: 'Drive-In',              tier: 3, D: 13, cash: 15, fame: 7, fansBonus: 6, entry: 4, blurb: 'Honk if you love us. They honk.' },
+  { id: 'fair',    name: 'County Fair',           tier: 3, D: 14, cash: 13, fame: 8, fansBonus: 8, entry: 4, blurb: 'Fried everything. Main-stage adjacent.' },
+  { id: 'home',    name: 'Home Crowd',            tier: 1, D: 8,  cash: 5,  fame: 2, fansBonus: 2, entry: 0, blurb: 'Friendly faces. Forgiving room.' },
   { id: 'rock',    name: 'Rock Club',           tier: 3, D: 14,  cash: 14, fame: 8, fansBonus: 6, entry: 4 },
   { id: 'fest',    name: 'Festival Side Stage', tier: 3, D: 14, cash: 12, fame: 8, fansBonus: 7, entry: 4 },
   { id: 'warped',  name: 'Main Stage',   tier: 4, D: 17, cash: 20, fame: 12, fansBonus: 10, entry: 6 },
@@ -79,8 +86,17 @@ function createGame(opts) {
 
 function offerPool(fame) {
   const t = tierOf(fame);
-  if (t <= 1) return VENUES.filter(v => v.tier === 1);
-  return VENUES.filter(v => v.tier === t || v.tier === t - 1);
+  const noHome = VENUES.filter(v => v.id !== 'home');
+  if (t <= 1) return noHome.filter(v => v.tier === 1);
+  return noHome.filter(v => v.tier === t || v.tier === t - 1);
+}
+function needsHomeCrowd(side) {
+  // Soft landing: two straight fails at the tail, or morale in the ditch.
+  const r = side.results || [];
+  if (side.morale <= 1) return true;
+  if (r.length < 2) return false;
+  const tail = r.slice(-2).filter(x => x.venue !== 'REST' && x.venue !== 'SHOP');
+  return tail.length === 2 && tail.every(x => x.result === 'fail');
 }
 
 function drawOffers(game, sideIdx, rng) {
@@ -92,7 +108,9 @@ function drawOffers(game, sideIdx, rng) {
   let guard = 0;
   while (b.id === a.id && guard++ < 10) b = pick();
   let offers = [a.id, b.id];
-  if (game.week >= 10 && side.fame >= 45 && r() < 0.2) {
+  if (needsHomeCrowd(side) && r() < 0.5) {
+    offers[Math.floor(r() * 2)] = 'home';
+  } else if (game.week >= 10 && side.fame >= 45 && r() < 0.2) {
     offers[Math.floor(r() * 2)] = 'warped';
   }
   game.offers = offers.slice();
@@ -304,7 +322,7 @@ function validateSide(s) {
 if (typeof module !== 'undefined') {
   module.exports = {
     VENUES, VENUE_BY_ID, CAPS, COSTS, RANKS, ROAD_WEEKS, SEASON_WEEKS,
-    mulberry32, rollDie, rollDice, clamp, tierOf, venueById, hasPair, isAnthem,
+    mulberry32, rollDie, rollDice, clamp, tierOf, venueById, hasPair, isAnthem, needsHomeCrowd,
     createSide, createGame, offerPool, drawOffers, startWeekUpkeep,
     forcedRest, forcedShop, checkSong, checkAnthem, resolveShow, resolveWorkDie,
     applyRoadEvent, buyCrew, restock, mechanic, finalScore, rankFor,

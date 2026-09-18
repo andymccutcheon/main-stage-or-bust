@@ -22,6 +22,9 @@
     try { pal = window.MSOBPalette.getPalette(); } catch (e) { pal = { accent: '#ff5a1f', sticker: '#ffd23f', skyTop: '#0e0e18', skyBot: '#1c1626', ink: '#f2ede3', dim: '#a8a196', road: '#3a352f', roadEdge: '#5a5348', grass: '#1e2a1c', house: '#2a2622', houseLit: '#ffd23f', star: '#ffd23f', fail: '#8a867e', rest: '#ff4438', vanBody: '#ff5a1f', vanP2: '#f2ede3', crowdShirts: ['#ff5a1f', '#ffd23f', '#7dd87d', '#3fa9ff'] }; }
     return pal;
   }
+  function railShow(on) {
+    try { const r = document.getElementById('visualRail'); if (r) r.classList.toggle('showtime', !!on); } catch (e) {}
+  }
   function setCaption(text) {
     S.caption = text;
     if (capEl) capEl.textContent = text;
@@ -55,10 +58,12 @@
         setCaption(vanName + ' rolls into week ' + S.mapMs.week + ' — ' + (S.mapMs.gatesOpen ? 'Main Stage gates open.' : 'next stop or bust.'));
         if (!reduced) spawn(S.mapFx, payload.game.mode === 'coop' ? 24 : 12, 'dust');
       }
+      railShow(false);
       wake();
     } else if (type === 'offerPicked') {
       try { S.stageSt.venueName = payload.venueName || S.stageSt.venueName; S.stageSt.tier = payload.tier || S.stageSt.tier; } catch (e) { console.error('offer', e); }
       setCaption('Books ' + (payload.venueName || 'the gig') + ' — week ' + S.mapMs.week + '.');
+      railShow(false);
       wake();
     } else if (type === 'diceRolled') {
       setCaption('Soundcheck — dice hit the table.');
@@ -74,6 +79,7 @@
         if (S.weather === 'storm') S.stageSt.weather = 'storm';
         const v = payload.rec.result === 'win' ? 'kills it' : 'eats it';
         setCaption(S.stageSt.venueName + ' — the band ' + v + ' (show ' + payload.rec.show + ' vs D' + payload.rec.D + ').');
+        railShow(true);
         S.mapMs.results.push({ week: S.mapMs.week, venue: payload.rec.venue, result: payload.rec.result });
       }
       wake();
@@ -133,7 +139,7 @@
           const b2 = Math.max(0, Math.min(11, Math.round(S.mapMs2.stopIndex)));
           p2Pos = { x: pts[b2].x + 30, y: pts[b2].y + 10 };
         }
-        Map.drawMap(mapCtx, S.mapMs, p, { vanPos, p2Pos, p2VanHp: S.mapMs2 ? S.mapMs2.vanHp : undefined, weather: S.weather });
+        Map.drawMap(mapCtx, S.mapMs, p, { vanPos, p2Pos, p2VanHp: S.mapMs2 ? S.mapMs2.vanHp : undefined, p2Avatar: S.mapMs2 ? S.mapMs2.avatar : undefined, weather: S.weather });
       } catch (e) { console.error('drawMap', e); }
       drawFx(mapCtx, S.mapFx, dt);
       mapCtx.restore();

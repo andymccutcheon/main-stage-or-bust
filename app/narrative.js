@@ -9,6 +9,12 @@ const VAN_NAMES = ['The Mold Mobile', 'Sir Vansalot', 'Bertha', 'The Sardine Can
 const FAN_NAMES = { 'pop-punk': 'parking-lot kids', hardcore: 'pile-on crew', ska: 'rude boys & girls', emo: 'crying-in-the-car club', metalcore: 'windmill squad', 'indie rock': 'tote-bag contingent' };
 
 function fanName(side) { return (FAN_NAMES[(side.flavor || {}).genre] || 'crowd'); }
+const HOME_FLAVOR_IDS = ['coffee', 'vfw', 'house', 'laundry', 'pizza'];
+function homeVenueName(venue, side) {
+  const town = side && side.flavor && side.flavor.hometown;
+  if (town && HOME_FLAVOR_IDS.includes(venue.id)) return town + ' ' + venue.name;
+  return venue.name;
+}
 function bandTag(side) {
   const f = side.flavor || {};
   return `${side.name}${f.genre ? ` (${f.genre} from ${f.hometown || 'nowhere'})` : ''}`;
@@ -45,6 +51,13 @@ function offerFlavor(venueId, rng) {
     college: ['The station streams to dozens. DOZENS. The DJ will mispronounce everything lovingly.', 'Campus crowd: half curious, half lost, all filmable.'],
     rock: ['Real green room. Real rider (potato chips). Don\'t touch the headliner\'s hummus.', 'The room that makes bands. Or breaks drumsticks. Both, usually.'],
     fest: ['Side stage, main-stage dreams. Play like the overflow crowd is the whole world.', 'Festival dust, borrowed shade, a thousand potential new fans walking past RIGHT NOW.'],
+    laundry: ['Warm dryers, cold folding tables, surprisingly honest reverb.', 'The regulars applaud between cycles. A captive, lint-rolled crowd.'],
+    pizza: ['Play by the ovens. The cheese pulls when you hit the chorus.', 'Kids on benches, parents on phones, everybody fed.'],
+    bowling: ['Between the lanes and the league. Roll strikes between songs.', 'Shoe-spray scent, pin-crash applause. Weirdly perfect.'],
+    community: ['The quad at golden hour. Flyers on every corkboard.', 'Half the crowd is studying you. The other half is studying.'],
+    drivein: ['Headlights for house lights. Honk twice for an encore.', 'A field of windshields, all pointed at you.'],
+    fair: ['Between the Ferris wheel and the fried dough. Biggest small room yet.', 'The midway goes quiet for your set. Then it screams.'],
+    home: ['Your people. The room that taught you the words.', 'No pretense, no entry fee, just the home crowd singing along.'],
     warped: ['The main stage. The sun, the dust, the sea of wristbands. Everything you drove 10,000 miles for is on the other side of this set.', 'This is the one they\'ll ask about forever. Tune up. Breathe. Go.'],
   };
   return narPick(rng, T[venueId] || ['A room. A crowd. A chance.']);

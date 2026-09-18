@@ -142,7 +142,7 @@ test('offers gate tiers and main stage', () => {
   const g = E.createGame({ mode: 'solo' });
   g.week = 3; g.sides[0].fame = 0;
   for (let i = 0; i < 50; i++) {
-    for (const o of E.drawOffers(g, 0, E.mulberry32(i))) assert.ok(['coffee', 'vfw', 'house'].includes(o.id));
+    for (const o of E.drawOffers(g, 0, E.mulberry32(i))) assert.ok(['coffee', 'vfw', 'house', 'laundry', 'pizza'].includes(o.id));
   }
   g.week = 11; g.sides[0].fame = 45;
   let sawWarped = false;
@@ -154,6 +154,27 @@ test('offers gate tiers and main stage', () => {
   for (let i = 0; i < 50; i++) {
     assert.ok(!E.drawOffers(g, 0, E.mulberry32(i)).some(o => o.id === 'warped'));
   }
+});
+
+test('home crowd only after struggle', () => {
+  const g = E.createGame({ mode: 'solo' });
+  const s = g.sides[0];
+  assert.equal(E.needsHomeCrowd(s), false);
+  s.results.push({ week: 1, venue: 'vfw', result: 'fail' });
+  assert.equal(E.needsHomeCrowd(s), false);
+  s.results.push({ week: 2, venue: 'house', result: 'fail' });
+  assert.equal(E.needsHomeCrowd(s), true);
+  s.morale = 5; s.results.push({ week: 3, venue: 'vfw', result: 'win' });
+  assert.equal(E.needsHomeCrowd(s), false);
+  s.morale = 1;
+  assert.equal(E.needsHomeCrowd(s), true);
+  // healthy band never sees it in 200 draws
+  const h = E.createGame({ mode: 'solo' });
+  let sawHome = false;
+  for (let i = 0; i < 200; i++) {
+    if (E.drawOffers(h, 0, E.mulberry32(i)).some(o => o.id === 'home')) { sawHome = true; break; }
+  }
+  assert.equal(sawHome, false);
 });
 
 test('final score and ranks', () => {

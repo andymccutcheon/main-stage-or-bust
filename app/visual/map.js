@@ -28,6 +28,7 @@
     const results = (s.results || []).map((r) => ({ week: r.week, venue: r.venue, result: r.result }));
     return {
       week, stopIndex, vanHp: s.van, morale: s.morale, fame: s.fame,
+      avatar: ((s.flavor || {}).avatar) || 'van',
       tier: s.fame >= 26 ? 3 : s.fame >= 12 ? 2 : 1,
       gatesOpen, results,
       fameTier: s.fame >= 45 ? 3 : s.fame >= 26 ? 2 : s.fame >= 12 ? 1 : 0,
@@ -136,10 +137,17 @@
       const Spr = window.MSOBSprites;
       if (!Spr || !Spr.getSprite) return;
       const hp = a.kind === 'p2' && opts.p2VanHp !== undefined ? opts.p2VanHp : ms.vanHp;
+      const av = a.kind === 'p2' && opts.p2Avatar ? opts.p2Avatar : ms.avatar;
       const variant = vanVariant(hp);
       try {
-        const img = Spr.getSprite(pal, 'van', { variant, p2: a.kind === 'p2' });
-        if (img) ctx.drawImage(img, a.x - 24, a.y - 40, 48, 48);
+        // damage ring: accent/green full, yellow worn, red critical (P2: white)
+        const ring = a.kind === 'p2' ? '#f2ede3' : hp >= 4 ? pal.accent : hp >= 2 ? pal.sticker : pal.rest;
+        ctx.fillStyle = ring;
+        ctx.beginPath(); ctx.arc(a.x, a.y - 16, 22, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#141414';
+        ctx.beginPath(); ctx.arc(a.x, a.y - 16, 19, 0, Math.PI * 2); ctx.fill();
+        const img = Spr.getSprite(pal, 'avatar-' + (av || 'van'), { variant, p2: a.kind === 'p2' });
+        if (img) ctx.drawImage(img, a.x - 20, a.y - 40, 40, 40);
         // dust puffs are FX layer (director), not baked
       } catch (e) {}
     });

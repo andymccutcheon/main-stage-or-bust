@@ -26,23 +26,23 @@ function setError(msg) { U.error = msg; say(msg); const e = $('#errbox'); if (e)
 /* ---------- setup wizard ---------- */
 let W = null;
 function wizSequence(mode) {
-  const seq = ['mode', 'name', 'genre', 'home', 'van'];
-  if (mode === 'versus') seq.push('name2', 'genre2', 'home2', 'van2');
+  const seq = ['mode', 'name', 'genre', 'home', 'van', 'avatar'];
+  if (mode === 'versus') seq.push('name2', 'genre2', 'home2', 'van2', 'avatar2');
   seq.push('launch');
   return seq;
 }
 function wizInit() {
   W = {
     step: 0, mode: 'solo', diff: 'club',
-    a: { name: 'The Paper Cuts', genre: 'random', home: '', homePick: 'random', van: '', vanPick: 'random' },
-    b: { name: 'The Stagedivers', genre: 'random', home: '', homePick: 'random', van: '', vanPick: 'random' },
+    a: { name: 'The Paper Cuts', genre: 'random', home: '', homePick: 'random', van: '', vanPick: 'random', avatar: 'random' },
+    b: { name: 'The Stagedivers', genre: 'random', home: '', homePick: 'random', van: '', vanPick: 'random', avatar: 'random' },
   };
 }
 function wizSide() { const s = wizSequence(W.mode)[W.step]; return s.endsWith('2') ? W.b : W.a; }
 function wizLabel() {
   const s = wizSequence(W.mode)[W.step];
   const bandNo = W.mode === 'versus' ? (s.endsWith('2') ? ' · Band Two' : ' · Band One') : '';
-  const titles = { mode: 'Who hits the road?', name: 'Name the band', genre: 'Pick a sound', home: 'Where from?', van: 'Name the van', launch: 'Load the van' };
+  const titles = { mode: 'Who hits the road?', name: 'Name the band', genre: 'Pick a sound', home: 'Where from?', van: 'Name the van', avatar: 'Pick your wheels', launch: 'Load the van' };
   const base = s.replace('2', '');
   return (titles[base] || base) + bandNo;
 }
@@ -73,6 +73,9 @@ function renderSetup() {
     body = `<p class="dim">You will live in this vehicle. Choose wisely.</p>` +
       tilePick('wvan', [['random', '🎲 Whatever runs', 'Sight unseen']].concat(VAN_NAMES.map(v => [v, v, ''])), side.vanPick) +
       `<label class="f" for="wvanCustom">…or name your own van (wins ties)</label><input type="text" id="wvanCustom" maxlength="24" placeholder="e.g. Bertha" value="${esc(side.van)}">`;
+  } else if (step === 'avatar' || step === 'avatar2') {
+    body = `<p class="dim">Your token on the tour map. The van still hauls the gear — this is YOU.</p>` +
+      tilePick('wavatar', [['random', '🎲 Surprise me', 'Fate picks your ride'], ['van', '🚐 The van', 'Bertha classic, dents and all'], ['bus', '🚌 School bus', 'Seats twelve, in theory'], ['guitar', '🎸 Flying axe', 'Louder than the engine'], ['mohawk', '🦰 Mohawk', 'Aerodynamic. Probably'], ['skull', '💀 Skull', 'Dead but committed'], ['bolt', '⚡ Bolt', 'Faster than load-out']], side.avatar);
   } else if (step === 'launch') {
     const sum = (s2) => `${esc(s2.name)} · ${esc(s2.genre === 'random' ? 'mystery genre' : s2.genre)}${s2.home ? ` from ${esc(s2.home)}` : ''}${s2.van ? ` · van ${esc(s2.van)}` : ''}`;
     body = `<div class="panel"><b>${sum(W.a)}</b>${W.mode === 'versus' ? `<br><b>${sum(W.b)}</b>` : ''}<br><small class="dim">Hometowns and vans left blank go random. Hit Back to change anything.</small></div>
@@ -94,6 +97,7 @@ function renderSetup() {
     else if (step === 'genre' || step === 'genre2') { side.genre = q('wgenre') || side.genre; }
     else if (step === 'home' || step === 'home2') { side.homePick = q('whome') || side.homePick; side.home = (document.getElementById('whomeCustom').value || '').slice(0, 24); }
     else if (step === 'van' || step === 'van2') { side.vanPick = q('wvan') || side.vanPick; side.van = (document.getElementById('wvanCustom').value || '').slice(0, 24); }
+    else if (step === 'avatar' || step === 'avatar2') { side.avatar = q('wavatar') || side.avatar; }
     else if (step === 'launch') { W.diff = q('diff') || W.diff; }
   };
   const wb = $('#wizBack');
@@ -104,10 +108,12 @@ function renderSetup() {
   if (sb) sb.addEventListener('click', () => {
     saveStep();
     const mode = W.mode, diff = W.diff;
+    const AVS = (window.MSOBSprites && window.MSOBSprites.AVATARS) || ['van', 'bus', 'guitar', 'mohawk', 'skull', 'bolt'];
     const pick = (s2) => ({
       genre: s2.genre === 'random' ? GENRES[Math.floor(Math.random() * GENRES.length)] : s2.genre,
       hometown: s2.home || HOMETOWNS[Math.floor(Math.random() * HOMETOWNS.length)],
       van: s2.van || VAN_NAMES[Math.floor(Math.random() * VAN_NAMES.length)],
+      avatar: s2.avatar === 'random' ? AVS[Math.floor(Math.random() * AVS.length)] : (s2.avatar || 'van'),
     });
     const names = mode === 'versus' ? [(W.a.name || 'Band One').slice(0, 24), (W.b.name || 'Band Two').slice(0, 24)] : [(W.a.name || 'Your Band').slice(0, 24)];
     U = newUI(createGame({ mode: mode === 'rival' ? 'solo' : mode, bandNames: names, difficulty: diff }));
@@ -196,9 +202,11 @@ function stepperHtml() {
     return `<li class="${cls}"><b>${i + 1}. ${t}</b><small>${d}</small></li>`;
   }).join('') + `</ol>`;
 }
-function offerCard(v) {
-  return `<div class="card${v.id === 'warped' ? ' warped' : ''}">
-    <h3>${esc(v.name)}${v.id === 'warped' ? ' ★' : ''}</h3>
+function offerCard(v, side) {
+  const disp = esc(homeVenueName(v, side));
+  const home = v.id === 'home' ? ' <span class="badge hot">🏠 homecoming</span>' : '';
+  return `<div class="card${v.id === 'warped' ? ' warped' : ''}${v.id === 'home' ? ' home' : ''}">
+    <h3>${disp}${v.id === 'warped' ? ' ★' : ''}</h3>${home}
     <ul><li>Difficulty ${v.D}</li><li>Pays $${v.cash} + ${v.fame} fame</li>
     <li>+${v.fansBonus} fans + margin</li><li>Entry $${v.entry}${v.hype ? ' · +1 hype' : ''}</li></ul>
     <button data-offer="${v.id}">Play here</button></div>`;
@@ -227,11 +235,17 @@ function renderGame() {
       U.weekOffers = drawOffers(g, U.turnIdx).map(v => v.id);
       g.sides[U.turnIdx].fame = keep;
     }
-    html += `<h3>Two offers. Pick your poison.</h3><div class="cards">${U.weekOffers.map(id => offerCard(venueById(id))).join('')}</div>`;
+    {
+      const vs = U.weekOffers.map(id => venueById(id));
+      let head = 'Two offers. Pick your poison.';
+      if (vs.some(v => v.id === 'home')) head = 'Down bad? The home crowd saves you a slot.';
+      else if (vs[0] && vs[1] && vs[0].tier === vs[1].tier) head = `Weekend run — two ${vs[0].tier >= 3 ? 'big' : vs[0].tier === 2 ? 'club' : 'local'} rooms. Build momentum.`;
+      html += `<h3>${head}</h3><div class="cards">${vs.map(v => offerCard(v, s)).join('')}</div>`;
+    }
   }
   if (U.phase !== 'offers' && U.venue) {
     const v = venueById(U.venue);
-    html += `<p><span class="badge hot">tonight: ${esc(v.name)} · D${v.D + (g.coopBump || 0)}</span></p>`;
+    html += `<p><span class="badge hot">tonight: ${esc(homeVenueName(v, s))} · D${v.D + (g.coopBump || 0)}</span></p>`;
   }
   if ((U.phase === 'play' && U.venue) || ((U.phase === 'work' || U.phase === 'done') && U.dice.length)) html += diceHtml(s);
   if (U.phase === 'work') html += workHtml(s);
@@ -320,7 +334,7 @@ function wire(s) {
     U.venue = b.getAttribute('data-offer');
     U.phase = 'play'; U.diceRolled = false;
     try { const vv = venueById(U.venue); Vemit('offerPicked', { venueId: U.venue, venueName: vv.name, tier: vv.tier, game: U.game, sideIdx: U.turnIdx }); } catch (e) {}
-    clog(`🎸 ${esc(s.name)} books <b>${esc(venueById(U.venue).name)}</b> (entry $${venueById(U.venue).entry}).`, true);
+    clog(`🎸 ${esc(s.name)} books <b>${esc(homeVenueName(venueById(U.venue), s))}</b> (entry $${venueById(U.venue).entry}).`, true);
     clog(`<i>${esc(offerFlavor(U.venue, Math.random))}</i>`);
     rerender();
   }));
@@ -377,6 +391,8 @@ function wire(s) {
   const rs = $('#restartBtn');
   if (rs) rs.addEventListener('click', () => { U = null; renderSetup(); });
 }
+const FLYER_OPENERS = { 'pop-punk': 'The Curfew Breakers', hardcore: 'Pile-On', ska: 'The Checkered Past', emo: "Dad's Camry", metalcore: 'Gazebo of Glass', 'indie rock': 'Tote Bag Season' };
+const FLYER_MOTTO = { 1: 'No stage. No problem.', 2: 'Louder than the jukebox.', 3: 'Big room. Bigger noise.', 4: 'The one they ask about forever.' };
 function openFlyer(s) {
   const g = U.game, v = venueById(U.venue);
   const rec = s.results[s.results.length - 1] || { result: 'fail', show: 0, D: v.D, fans: 0, cash: 0, fame: 0 };
@@ -384,15 +400,25 @@ function openFlyer(s) {
   const warns = stateWarnings(s);
   clog(`Flyer on every pole: <i>"${esc(copy.headline)}"</i>`, true);
   const label = g.sides.length > 1 && U.turnIdx === 0 ? 'Hand off →' : 'End week →';
+  const tier = v.tier >= 4 ? 4 : v.tier;
+  const wl = s.results.filter(r => r.result === 'win').length + 'W–' + s.results.filter(r => r.result === 'fail').length + 'L';
+  const door = rec.fans * 4 + 12 + g.week;
+  const opener = (s.flavor && FLYER_OPENERS[s.flavor.genre]) || 'The Opening Band';
+  const stamps = [];
+  if ((U.visualWeather || 'clear') === 'storm') stamps.push('<span class="fstamp">rain or shine</span>');
+  if (v.id === 'home') stamps.push('<span class="fstamp">hometown hero</span>');
+  if (rec.fans >= 10) stamps.push('<span class="fstamp hot">packed to the walls</span>');
   const ov = document.createElement('div');
   ov.className = 'overlay'; ov.id = 'flyerOverlay';
-  ov.innerHTML = `<div class="flyer" role="dialog" aria-modal="true" aria-label="Show flyer for ${esc(s.name)}">
-    <div class="flyer-kicker">Week ${g.week} · ${esc(v.name)} · Live</div>
+  ov.innerHTML = `<div class="flyer flyer-t${tier}" role="dialog" aria-modal="true" aria-label="Show flyer for ${esc(s.name)}">
+    <div class="flyer-kicker">Week ${g.week} of 12 · ${esc(homeVenueName(v, s))} · Live</div>
     <div class="flyer-band">${esc(s.name)}</div>
-    <div><span class="stamp ${rec.result}">${rec.result === 'win' ? 'Killed it' : 'Trainwreck'}</span></div>
+    <div class="flyer-support">w/ ${esc(opener)} · ${esc(FLYER_MOTTO[tier] || '')}</div>
+    <div><span class="stamp ${rec.result}">${rec.result === 'win' ? 'Killed it' : 'Trainwreck'}</span>${stamps.join('')}</div>
     <p class="flyer-head" id="flyerHead">${esc(copy.headline)}</p>
     <p class="flyer-blurb" id="flyerBlurb">${esc(copy.blurb)}</p>
     <div class="flyer-deltas">+${rec.fans} fans · +$${rec.cash} · +${rec.fame} fame</div>
+    <div class="flyer-door">Door count ~${door} · Season ${wl}</div>
     <ul class="flyer-state">${warns.length ? warns.map(w => `<li>${esc(w)}</li>`).join('') : '<li>All systems loud. The van even starts.</li>'}</ul>
     <div class="shoprow">
       <button id="backBtn">Back to the van</button>

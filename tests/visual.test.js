@@ -64,6 +64,12 @@ describe('vans + versus', () => {
     assert.equal(Mp.vanVariant(1), 'smoking');
     assert.equal(Mp.vanVariant(0), 'wreck');
   });
+  it("mapState carries avatar (default van)", () => {
+    const g = E.createGame({ mode: 'solo' });
+    assert.equal(Mp.mapState(g, 0).avatar, 'van');
+    g.sides[0].flavor = { avatar: 'bolt' };
+    assert.equal(Mp.mapState(g, 0).avatar, 'bolt');
+  });
   it('versus side 2 gets away kit', () => {
     const g = E.createGame({ mode: 'versus', bandNames: ['A', 'B'] });
     assert.equal(St.stageState(g, 0, null).away, false);

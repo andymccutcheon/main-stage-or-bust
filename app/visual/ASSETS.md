@@ -36,3 +36,9 @@ QC gate (M3): centered subjects, stable anchors, no edge-crosstalk — fail repe
   paths. Particles pooled (≤160 per layer), auto-remove on life expiry.
 - `prefers-reduced-motion` → static frames, captions still update. Dev FPS probe:
   load with `?fps=1` to mirror FPS into `document.title` (never shipped default).
+| avatar-van | procedural v1 (van master, damage edits) | 2.5x token (40px) + damage ring | ground center | pristine/dented/smoking/wreck |
+| avatar-bus | procedural v1 (sprites.js AVATAR_MAPS.bus, sticker-yellow) | 2.5x token + ring | ground center | single (ring shows damage) |
+| avatar-guitar | procedural v1 (AVATAR_MAPS.guitar, accent body) | 2.5x token + ring | ground center | single |
+| avatar-mohawk | procedural v1 (AVATAR_MAPS.mohawk) | 2.5x token + ring | ground center | single |
+| avatar-skull | procedural v1 (AVATAR_MAPS.skull) | 2.5x token + ring | ground center | single |
+| avatar-bolt | procedural v1 (AVATAR_MAPS.bolt) | 2.5x token + ring | ground center | single |

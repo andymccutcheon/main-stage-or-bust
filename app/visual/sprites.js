@@ -121,6 +121,98 @@
     '................',
     '................',
   ];
+  const AVATAR_MAPS = {
+    bus: [
+      '................',
+      '................',
+      '................',
+      '................',
+      '..KKKKKKKKKKKK..',
+      '..KYYYYYYYYYYK..',
+      '..KYWKYWKYWWYK..',
+      '..KYYYYYYYYYYK..',
+      '..KYYYYYYYYYYK..',
+      '..KYKYYYYYYKYK..',
+      '..KKYYYYYYYYKK..',
+      '...TKYYYYYYKT...',
+      '...HKYYYYYYHK...',
+      '....KK....KK....',
+      '................',
+      '................',
+    ],
+    guitar: [
+      '.............II.',
+      '............II..',
+      '...........II...',
+      '..........II....',
+      '.........II.....',
+      '...KK...II......',
+      '...KBK.II.......',
+      '...KBBKI........',
+      '....KBBBK.......',
+      '....KBBBK.......',
+      '.....KBK........',
+      '......K.........',
+      '................',
+      '................',
+      '................',
+      '................',
+    ],
+    mohawk: [
+      '......RRR.......',
+      '......RRR.......',
+      '.....KRRRK......',
+      '....KFFFFFK.....',
+      '....KFFFFFK.....',
+      '....KFFKFFK.....',
+      '.....KFFFK......',
+      '......KKK.......',
+      '....KKBBKK......',
+      '...KBBBBBBK.....',
+      '...KBBBBBBK.....',
+      '....KBBBBK......',
+      '.....KBBK.......',
+      '.....KBBK.......',
+      '....KK..KK......',
+      '................',
+    ],
+    skull: [
+      '................',
+      '................',
+      '.....KKKK.......',
+      '....KPPPPK......',
+      '...KPPPPPPK.....',
+      '...KPKKPPPK.....',
+      '...KPKKPPPK.....',
+      '...KPPPPPPK.....',
+      '....KPKKPK......',
+      '....KPPPPK......',
+      '.....KKKK.......',
+      '................',
+      '................',
+      '................',
+      '................',
+      '................',
+    ],
+    bolt: [
+      '........YY......',
+      '.......YY.......',
+      '......YY........',
+      '.....YYYK.......',
+      '......YY........',
+      '.....YY.........',
+      '....YYYK........',
+      '.....YY.........',
+      '....YY..........',
+      '...YYK..........',
+      '...YK...........',
+      '................',
+      '................',
+      '................',
+      '................',
+      '................',
+    ],
+  };
   const PROP_MAPS = {
     merch: [
       '................',
@@ -252,7 +344,7 @@
 
   function baseColors(pal) {
     return {
-      K: '#141414', F: '#e8b98a', B: pal.vanBody, W: '#bdeaff',
+      K: '#141414', F: '#e8b98a', B: pal.vanBody, W: '#bdeaff', R: '#ff4438',
       T: '#0c0c0c', H: '#8a867e', S: '#8a867e', I: '#3a2e22',
       D: '#5a5348', Y: pal.sticker, P: '#f2ede3', Z: '#3fa9ff',
     };
@@ -319,6 +411,25 @@
       if (!cache.has(key)) cache.set(key, vanWithDamage(pal, v, p2));
       return cache.get(key);
     }
+    if (id.indexOf('avatar-') === 0) {
+      const a = id.slice(7);
+      if (a === 'van') {
+        const v = opts.variant || 'pristine';
+        const key = 'van:' + v + ':' + (p2 ? 'p2' : 'p1') + ':' + palKey;
+        if (!cache.has(key)) cache.set(key, vanWithDamage(pal, v, p2));
+        return cache.get(key);
+      }
+      if (AVATAR_MAPS[a]) {
+        const key = 'avatar:' + a + ':' + (p2 ? 'p2' : 'p1') + ':' + palKey;
+        if (!cache.has(key)) {
+          const colors = baseColors(pal);
+          if (p2 && a !== 'bus') colors.B = pal.vanP2;
+          cache.set(key, parseRows(AVATAR_MAPS[a], colors));
+        }
+        return cache.get(key);
+      }
+      return null;
+    }
     if (id.indexOf('band-') === 0) {
       const role = id.slice(5);
       return bandFrame(pal, role, opts.pose || 'idle', opts.frame || 0, p2);
@@ -347,13 +458,17 @@
     const issues = [];
     if (VAN_MASTER.length !== 16) issues.push('van rows != 16');
     VAN_MASTER.forEach((r, i) => { if (r.length !== 16) issues.push('van row ' + i + ' len ' + r.length); });
+    Object.keys(AVATAR_MAPS).forEach((k) => {
+      if (AVATAR_MAPS[k].length !== 16) issues.push('avatar-' + k + ' rows != 16');
+      AVATAR_MAPS[k].forEach((r, i) => { if (r.length !== 16) issues.push('avatar-' + k + ' row ' + i); });
+    });
     Object.keys(BAND_BASE).forEach((k) => {
       if (BAND_BASE[k].length !== 16) issues.push(k + ' rows != 16');
     });
     return issues;
   }
 
-  const api = { SCALE, GROUND_ROW, VAN_MASTER, BAND_BASE, CROWD_BLOB, getSprite, audit };
+  const api = { SCALE, GROUND_ROW, VAN_MASTER, BAND_BASE, CROWD_BLOB, AVATAR_MAPS, AVATARS: ['van', 'bus', 'guitar', 'mohawk', 'skull', 'bolt'], getSprite, audit };
   if (typeof module !== 'undefined') module.exports = api;
   else window.MSOBSprites = api;
 })();

@@ -6,7 +6,7 @@ You named your band in a garage. Twelve weeks later you are either playing the m
 
 ## 2. Core gameplay loop (one week, x12)
 1. **Road check.** Weeks 4, 7, 10: roll 1d6 on the Road Table. Otherwise nothing.
-2. **Get offers.** Draw 2 gig offers (see S3). Pick 1, pay its entry/travel cost. The other is discarded.
+2. **Get offers.** Draw 2 gig offers (see S3; 15 venues + Main Stage). Same-tier pairs are framed as weekend runs. After 2 straight fails (or morale ≤1), one slot may become a forgiving Home Crowd gig. Pick 1, pay its entry/travel cost. The other is discarded.
 3. **Soundcheck roll.** Roll 5 white d6 (+1 gold d6 if Manager hired). No rerolls — stage what you roll.
 4. **Songwriting check.** After staging (step 5), if your 3 leftover work dice contain a pair, you may check off 1 Song box (once per week max). Staging your best dice competes with keeping a pair — that tension is intentional.
 5. **Play the show.** Place any 2 dice on stage. Optional Hype spend (2 Hype = +1 Show, max +2). Compare Show Hype vs venue Difficulty.
@@ -42,11 +42,18 @@ Tour Log (12 rows: week/venue/D/result/fans/cash/fame) | Fame ladder 0–60 with
 | Coffee House | T1 | 8 | 4 | 2 | +1 | $0, +1 Hype |
 | VFW Hall | T1 | 9 | 6 | 3 | +2 | $0 |
 | House Show | T1 | 10 | 8 | 4 | +3 | $0 |
+| Laundromat | T1 | 8 | 5 | 2 | +1 | $0 |
+| Pizza Parlor | T1 | 10 | 9 | 4 | +3 | $0 |
+| Home Crowd | T1 | 8 | 5 | 2 | +2 | $0, homecoming only |
 | Record Store | T2 | 10 | 8 | 5 | +3 | $2 |
 | Dive Bar | T2 | 11 | 10 | 5 | +4 | $2 |
 | College Radio | T2 | 12 | 8 | 6 | +4 | $2 |
+| Bowling Alley | T2 | 11 | 11 | 5 | +4 | $2 |
+| Community College | T2 | 12 | 7 | 6 | +5 | $2 |
 | Rock Club | T3 | 13 | 14 | 7 | +6 | $4 |
 | Festival Side Stage | T3 | 14 | 12 | 8 | +7 | $4 |
+| Drive-In | T3 | 13 | 15 | 7 | +6 | $4 |
+| County Fair | T3 | 14 | 13 | 8 | +8 | $4 |
 | Main Stage | W | 17 | 20 | 12 | +10 | $6 |
 
 - Show Hype = sum of 2 stage dice + Skill (0–3) + Albums completed (0–2) + Tech (+1) + Hype spent (0–2).
